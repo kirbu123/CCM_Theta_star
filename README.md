@@ -1,92 +1,252 @@
 # virtual-husky
 
+Данный репозиторий посвящен реализации виртуального Husky в симуляторе [Isaac Sim](https://docs.omniverse.nvidia.com/isaacsim/latest/index.html), а также запуска различных сценариев и записи синтетических датасетов на их основе.
+
+![virtual-husky](img/husky_code_u.png)
+
+## Table of Contents
+- [virtual-husky](#virtual-husky)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Pre-requisites or Dependencies](#pre-requisites-or-dependencies)
+    - [Isaac Sim Installation](#isaac-sim-installation)
+    - [ROS2 Humble Installation](#ros2-humble-installation)
+    - [DVC Installation and Setup](#dvc-installation-and-setup)
+  - [Structure](#structure)
+  - [Quickstart](#quickstart)
+  - [Usage scenarios](#usage-scenarios)
+    - [Работа с ROS2](#работа-с-ros2)
+  - [Configuration](#configuration)
+  - [Data (and dvc)](#data-and-dvc)
+    - [3D модель робота](#3d-модель-робота)
+    - [3D модель среды](#3d-модель-среды)
+    - [DVC 'на пальцах'](#dvc-на-пальцах)
+    - [Работа с DVC](#работа-с-dvc)
+  - [TODO](#todo)
+
+## Pre-requisites or Dependencies
+
+- [Isaac Sim](https://docs.omniverse.nvidia.com/isaacsim/latest/install_workstation.html)
+- [ROS2-Humble](https://docs.ros.org/en/humble/Installation.html)
+- [DVC](https://dvc.org/doc/install)
+
+### Isaac Sim Installation
+На данный момент предполагается работа с desktop-версией симулятора, работа в докер контейнере и без графического интерфейса также поддерживается, но будет добавлена позже.
+
+В целом, [официальная инструкция](https://docs.omniverse.nvidia.com/isaacsim/latest/install_workstation.html) содержит довольно детальное описание всех шагов установки, которым нужно внимательно следовать и не пропускать "лишние шаги" если не уверены что они действительно лишние. Здесь приведены только некоторые замечания к этой инструкции.
+
+**Notes:**
+- Системные требования
+    - Системные требования указаннные в п.1 инструукции являются скорее рекомендациями, симулятор успешно (хоть и более медленно) работает и на менее мощном железе.
+    - Если у вас меньше оперативной памяти чем "минимально необходимо", рекомендуется увеличить размер файла подкачки (swap file) до соответствия требованиям или чуть больше (например у вас 16 Gb RAM, минимальное требование 32 Gb RAM - [создать swap file](https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-20-04) 16+ Gb).
+    - **Критичное требование** к видеокарте - она должна поддерживать технологию RTX.
+- Регистрация и установка
+    - Для регистрации как nvidia developer лучше использовать почту в домене gmail.com (есть подозрение, что с российскими адресами не работает принципиально)
+    - Для скачивания и установки Isaac Sim потребуется VPN, желательно платный тк объем данных большой. Далее при использовании через python API VPN не нужен, но при использовании GUI симулятор с завидной регулярностью просит авторизоваться на сайте Nvidia, что опять таки требует VPN.
+    - П. 6 инструкции по установке VSCode - разумеется, не является обязательным. Это может быть удобно, так как многие утилиты содержат специальную кнопку для "открыть код в VSCode" и даже поддерживается отладка, но на практике если ваш компьютер не соответствует "оптимальным" требованиям, то такой функционал будет работать очень медленно.
+
+### ROS2 Humble Installation
+
+В целом критичным является именно ROS2, и скорее всего с Foxy также будет работать, но конечная цель все равно Humble и рекомендуется использовать именно его.
+
+Для установки - следуем [официальной документации](https://docs.ros.org/en/humble/Installation.html).
+
+Если у вас Ubuntu 20.04 - возможно, проще использовать Docker контейнер, так как без него придётся [собирать Humble из исходников](https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html).
 
 
-## Getting started
+### DVC Installation and Setup
+DVC - это инструмент для управления данными, который позволяет хранить данные в удаленном хранилище (в данном случае - S3-совместимом удалённом хранилище), версионировать их и работать с ними как с локальными. **По сути - "git for data".** Подробнее о том, зачем это нужно и как работать с DVC можно прочитать в разделе [Data (and dvc)](#data-and-dvc).
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+С установкой dvc всё просто - установка согласно инструкции на [официальном сайте](https://dvc.org/doc/install), а для работы с удаленным хранилищем необходимо установить следующие переменные среды:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+```bash
+export AWS_SECRET_ACCESS_KEY=jyk6lgkvhwuemj752vawtcnvw2afz2pwac6skzhsrcs3rfxvbgpru
+export AWS_ACCESS_KEY_ID=jvn4b7kof64vmlbur7i3ahx6wblq
 ```
-cd existing_repo
-git remote add origin https://git.sberrobots.ru/mipt.navigation/simulator/virtual-husky.git
-git branch -M master
-git push -uf origin master
+
+(Да это секретные ключи, но хранилище бесплатное, репозиторий приватный и надеюсь все будет хорошо, если есть конструктивные предложения по улучшению - буду рад услышать и поправить).
+
+Как работать с DVC описано в разделе [Data (and dvc)](#data-and-dvc), но чтение [официального гайда](https://dvc.org/doc/start/data-and-model-versioning) также приветсвтуется.
+
+## Structure
+Структура репозитория:
+```bash
+virtual-husky
+├── assets
+│   └── husky
+│       ├── ####.usd
+│       ├── ####.usd
+│       └── ####.usd
+├── config
+│   └── LiDAR
+│       ├── Example_Rotary.json
+│       └── VLP_16.json
+├── controllers
+│   ├── interface_helper.py
+│   ├── kinematics.py
+│   ├── motion_policy_interface.py
+│   ├── pick_place.py
+│   └── rmpflow.py
+├── img
+│   └── husky_code_u.png
+├── README.md
+├── rmpflow
+│   ├── ####.urdf
+│   ├── ####.yaml
+│   ├── ####.yaml
+│   ├── ####.urdf
+│   ├── ####.usd
+│   └── ####.usd
+├── scripts
+│   ├── gripper_control.py
+│   ├── navi_pick_cams.py
+│   └── navi_pick.py
+└── tasks
+    ├── follow_target.py
+    ├── navigation.py
+    └── pick_place.py
 ```
 
-## Integrate with your tools
+где:
+- `assets` - директория, в которой хранятся различные 3D модели (или их составляющие), как правило в формате usd. Для экономии места используется бинарный формат usd, и эта директория версионируется с помощью dvc, а не git.
 
-- [ ] [Set up project integrations](https://git.sberrobots.ru/mipt.navigation/simulator/virtual-husky/-/settings/integrations)
+- `config` - папка с конфигурационными файлами для различных сенсоров и других компонентов симулятора. На данный момент только лидар.
 
-## Collaborate with your team
+- `navi_pick.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, без сенсоров).
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- `navi_pick_cams.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде "склад", c сенсорами  и публикацией в ROS).
 
-## Test and Deploy
+- `controllers`, `rmpflow`, `tasks` - содержат скрипты отвечающие за управление и кинематику робота, пока более детально толкьо в документации.
 
-Use the built-in continuous integration in GitLab.
+- `navi_pick.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, без сенсоров).
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- `navi_pick_cams.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, c сенсорами).
 
-***
+## Quickstart
 
-# Editing this README
+Запустим тестовый сценарий навигации и захвата цели (в демо-среде, без сенсоров).
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+**Notes:** 
+- Для корректной работы скриптов (импорт модулей Isaac Sim и тд) - необходимо запускать их из директории расположенной где-либо внутри корневой директории симулятора (при установке по умолчанию - `/home/<USER>/.local/share/ov/pkg/isaac_sim-2022.2.1`).
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+В целом можно располагать скрипты прямо в ней, но разработчики предусмотрели отдельную директорию для хранения пользовательских расширений (и скриптов соответственно) - `extension_examples/user_examples` и логично использовать её. Или по крайней мере просто внутри директории `extension_examples`.
 
-## Name
-Choose a self-explaining name for your project.
+*SubNote:* extension_examles - просто ссылка на директорию, которая лежит глубже, поэтому относительные пути могут отличатьс я от просто `extension_examles/bla-blah`- это нормально.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- Скрипты запускаются не просто через `python`, a из корневой директории симулятора, через `./python.sh <path_to_script.py>`. Это необходимо для корректной работы импорта модулей Isaac Sim.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- Если у вас установлен ROS2/ROS его **не надо включать (source ...)** в терминале, который используется для запуска скриптов. Это приведет к конфликтам переменных среды.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- Для корректной работы с ROS(2) также необходимо настроить переменные среды, подробнее в разделе [Работа с ROS2](#работа-с-ros2).
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```bash
+# Переходим в корневую директорию симулятора и далее в `extension_examples`
+# Не забываем заменить <USER> на свой логин
+cd /home/<USER>/.local/share/ov/pkg/isaac_sim-2022.2.1/extension_examples
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+# Клонируем репозиторий
+git clone https://git.sberrobots.ru/mipt.navigation/simulator/virtual-husky.git
+# или если у вас есть ssh ключи
+git clone git@git.sberrobots.ru:mipt.navigation/simulator/virtual-husky.git
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+# Переходим в директорию с репозиторием
+cd virtual-husky
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+# Подтягиваем данные
+dvc pull
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+# Выходим обратно в корневую директорию симулятора
+cd ../..
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+# Запускаем скрипт
+./python.sh extension_examples/virtual-husky/navi_pick.py
 
-## License
-For open source projects, say how it is licensed.
+# Ждём пока скрипт загрузится и начнёт выполняться, это может занять время (до 5-7 минут)
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+# Для остановки скрипта нажимаем Ctrl+C
+```
+
+## Usage scenarios
+
+Пока только тестовый - подъехать к кубику и поднять его. По сути описан в [Quickstart](#quickstart).
+
+В ближайшее время планируется добавить возможность управления с клавиатуры для записи тестового датасета.
+
+### Работа с ROS2
+
+To be filled
+
+
+## Configuration
+
+To be filled
+
+## Data (and dvc)
+
+На данный момент данны состоят из фотореалистичной сцены 5го этажа МФТИ и 3D модели самого робота.
+В будущем также появятся 3D элементы сцены, которые можно будет размещать в среде.
+
+### 3D модель робота
+
+3D модель робота хранится (по частям) при помощи dvc в разделе assets. Эти части можно открывать в Isaac Sim, модифицировать и коммитить изменения в репозиторий, поддерживая консистентность кода и 3D модели.
+
+На данный момент части всего 2:
+- `husky.usd` - колёсная платформа Husky, включает в себя колёса, подвеску и корпус.
+    - `husky_with_sensors.usd` - то же самое, но с сенсорами (камерами и лидаром)
+- `ur5_with_gripper.usd` - робот-манипулятор UR5 с гриппером.
+    - *(пока нет)* `ur5_with_gripper_and_cam.usd` - то же самое, но с камерой
+
+### 3D модель среды
+
+Модель фотореалистичная, весит ~1Gb, а S3 хранилище используется бесплатное, поэтому на данный момент хранится только на яндекс диске. 
+
+Кроме того она пока не редактируется и версионировать там +- нечего. В будущем, когда появится полноценное S3 хранилище - под контроль dvc включим также и её.
+
+### DVC 'на пальцах'
+
+DVC - своеобразный git для (больших) файлов и файлов которые хранятся в бинарном виде и не могут корректно отслеживаться при помощи git.
+
+Принцип работы очень простой - дял каждого файла/директории, которую добавили для отслеживания - dvc вычисляет хэш-сумму и сохраняет её в специальный файл `.dvc` вместо самого файла. При этом сам файл не добавляется в git (добавляется в .`gitignore`), а вместо него добавляется файл `.dvc` (который весит килобайты, вместо мега- и гигабайтов).
+
+Также в директории `.dvc` хранится кофигурация самого dvc (в том числе и ссылка на удалённое хранилище). Таким образом, когда вы делаете `git push` - хэш-суммы файлов с информацией о том к какому коммиту они относятся сохраняются в репозитории, вместе с информацией об удаялёенном хранилище, где они лежат.
+
+И когда вы/ваш коллега на другом устройстве сделает `git pull` - он подгрузит всю необходимую информацию. И останетс ятолько сделать `dvc pull` чтобы подтянуть данные с удаленного хранилища.
+
+### Работа с DVC
+
+По большей части работа с dvc аналогична работе с git, и по сути дублирует её:
+
+- **git**
+    - `git init` - инициализировать репозиторий git
+    - `git add <file>` - добавить файл под управление git
+    - `git commit` - закоммитить изменения
+    - `git push` - отправить изменения на удалённый репозиторий
+    - `git pull` - подтянуть изменения с удалённого репозитория
+    - `git checkout <branch>` - переключиться на ветку
+- **dvc**
+    - `dvc init` - инициализировать репозиторий dvc
+    - `dvc add <file>` - добавить файл под управление dvc
+    - `dvc commit` - **не существует**, коммиты делаются через git
+    -  `dvc push` - отправить изменения на удалённое хранилище
+    - `dvc pull` - подтянуть изменения с удалённого хранилища
+    - `dvc checkout <branch>` - переключиться на ветку
+
+Таким образом приблизительный сценарий использования такой:
+1. Обновили скрипт/написали новый: `git add <scripts/my_script.py>`
+2. Если ваш скрипт использует новые данные (**или вы обновили существующую модель**) - добавляем их под управление/отмечаем изменения в dvc: `dvc add <data/my_data.usd>`
+3. Git commit: `git commit -m "Added my_script.py"`
+4. Git push: `git push`
+5. Dvc push: `dvc push`
+6. Готово, вы восхитительны!
+
+Создание новой ветки и переключение на неё происходит аналогично git:
+1. `git checkout -b <new_branch>`
+2. `dvc checkout <new_branch>` (опять же уже без `-b`, тк dvc следит за ветками git)
+
+В основном так, но ознакомление с официальной [документацией](https://dvc.org/doc/start/data-management/data-versioning) приветствуется.
+Туда эе стоит обращатеся если у вас есть сосмнения как работает тот или иной механизм, dvc это классно и удобно, но есть нюансы и **аналогия с git не идеальна**. Если вы не уверены  - лучше посмотреть в документацию.
+
+## TODO
+
