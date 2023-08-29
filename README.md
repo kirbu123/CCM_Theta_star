@@ -77,46 +77,50 @@ virtual-husky
 │       ├── ####.usd
 │       ├── ####.usd
 │       └── ####.usd
+├── assets.dvc
 ├── config
+│   ├── general
+│   │   └── ####.yaml
 │   └── LiDAR
 │       ├── Example_Rotary.json
 │       └── VLP_16.json
-├── controllers
-│   ├── interface_helper.py
-│   ├── kinematics.py
-│   ├── motion_policy_interface.py
-│   ├── pick_place.py
-│   └── rmpflow.py
+├── gripper_control.py
 ├── img
 │   └── husky_code_u.png
+├── navi_pick_cams.py
+├── navi_pick.py
 ├── README.md
-├── rmpflow
-│   ├── ####.urdf
-│   ├── ####.yaml
-│   ├── ####.yaml
-│   ├── ####.urdf
-│   ├── ####.usd
-│   └── ####.usd
-├── scripts
-│   ├── gripper_control.py
-│   ├── navi_pick_cams.py
-│   └── navi_pick.py
-└── tasks
-    ├── follow_target.py
-    ├── navigation.py
-    └── pick_place.py
+└── src
+    ├── config.py
+    ├── controllers
+    │   ├── interface_helper.py
+    │   ├── kinematics.py
+    │   ├── motion_policy_interface.py
+    │   ├── pick_place.py
+    │   └── rmpflow.py
+    ├── rmpflow
+    │   ├── ####.urdf
+    │   ├── ####.yaml
+    │   ├── ####.yaml
+    │   ├── ####.urdf
+    │   ├── ####.usd
+    │   └── ####.usd
+    └── tasks
+        ├── follow_target.py
+        ├── navigation.py
+        └── pick_place.py
 ```
 
 где:
 - `assets` - директория, в которой хранятся различные 3D модели (или их составляющие), как правило в формате usd. Для экономии места используется бинарный формат usd, и эта директория версионируется с помощью dvc, а не git.
 
-- `config` - папка с конфигурационными файлами для различных сенсоров и других компонентов симулятора. На данный момент только лидар.
+- `config` - папка с конфигурационными файлами сценариев в целом и отдельных сенсоров.
 
 - `navi_pick.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, без сенсоров).
 
 - `navi_pick_cams.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде "склад", c сенсорами  и публикацией в ROS).
 
-- `controllers`, `rmpflow`, `tasks` - содержат скрипты отвечающие за управление и кинематику робота, пока более детально только в документации.
+- `src/{controllers,rmpflow,tasks}` - содержат скрипты отвечающие за управление и кинематику робота, пока более детально только в документации.
 
 - `navi_pick.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, без сенсоров).
 
@@ -229,7 +233,7 @@ DVC - своеобразный git для (больших) файлов и фа�
     - `dvc init` - инициализировать репозиторий dvc
     - `dvc add <file>` - добавить файл под управление dvc
     - `dvc commit` - **не существует**, коммиты делаются через git
-    -  `dvc push` - отправить изменения на удалённое хранилище
+    - `dvc push` - отправить изменения на удалённое хранилище
     - `dvc pull` - подтянуть изменения с удалённого хранилища
     - `dvc checkout <branch>` - переключиться на ветку
 

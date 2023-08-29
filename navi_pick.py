@@ -30,9 +30,11 @@ from pxr import UsdPhysics, Usd, Sdf
 
 from src.tasks.follow_target import FollowTarget
 from src.tasks.pick_place import PickPlace
-from src.tasks.navigation import Navigate
-from src.controllers.rmpflow import RMPFlowController
 from src.controllers.pick_place import PickPlaceController
+from src.config import get_config, Config
+
+
+cfg = get_config()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--test", default=False, action="store_true", help="Run in test mode")
@@ -66,7 +68,7 @@ def add_goals(world, scene, goals):
 ###################################### Init Scene #############################################
 my_world = World(stage_units_in_meters=1.0)
 
-traj=[[2,2]]
+# traj=[[2,2]]
 # traj=[[3,3], [3, -3], [-3, -3], [-3, 3], [0, 0]]
 
 navigation_end = np.array([1.4883547, 1.3499106, 0])
@@ -84,10 +86,7 @@ relative_target_position = np.array([-0.3, -0.3, 0]) / get_stage_units()
 relative_target_position[2] = cube_size[2] / 2.0
 
 pick_task = PickPlace(name="denso_pick_place",
-                      husky_asset_path=os.path.abspath("exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky.usd"),
-                      cube_initial_position=np.array([2.1, 1.7, 0]),
-                      cube_initial_orientation=np.array([1, 0, 0, 0]),
-                      target_position=np.array([1.6, 2.2, 0.02]),
+                      cfg=cfg,
                       )
 
 my_world.add_task(pick_task)
@@ -99,7 +98,7 @@ husky=pick_task.robots["husky"]
 
 scene={}
 
-add_goals(my_world, scene, traj)
+add_goals(my_world, scene, cfg.trajectory)
 my_world.reset()
 
 
@@ -108,7 +107,8 @@ my_world.reset()
 husky_controller = WheelBasePoseController(name="cool_controller",
                                                     open_loop_wheel_controller=
                                                     DifferentialController(name="simple_control",
-                                                    wheel_radius=0.3, wheel_base=0.5),
+                                                    wheel_radius=cfg.wheel_radius,
+                                                    wheel_base=cfg.wheel_base),
                                                     is_holonomic=False,)
 articulation_controller = my_denso.get_articulation_controller()
 
@@ -118,7 +118,7 @@ while simulation_app.is_running():
     my_world.step(render=True)
     if my_world.is_playing():
         if not navigation_finish:
-            for i, milestone in enumerate(traj):
+            for i, milestone in enumerate(cfg.trajectory):
                 milestone = np.asarray(milestone)
                 print(f"\nCurr goal: {milestone}")
                 distance = 100
@@ -134,8 +134,8 @@ while simulation_app.is_running():
                     wheel_actions=husky_controller.forward(start_position=position,
                                                                         start_orientation=orientation,
                                                                         goal_position=milestone,
-                                                                        lateral_velocity=0.5,
-                                                                        position_tol = 0.1,)
+                                                                        lateral_velocity=cfg.lateral_velocity,
+                                                                        position_tol = cfg.position_tol,)
                     # print(f"Wheel actions: {wheel_actions}")
                     wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
                     print(f"Modified wheel actions: {wheel_actions}\n")
@@ -153,8 +153,8 @@ while simulation_app.is_running():
         wheel_actions=husky_controller.forward(start_position=end_position,
                                                     start_orientation=end_orientation,
                                                     goal_position=end_position,
-                                                    lateral_velocity=0.5,
-                                                    position_tol = 0.1,)   
+                                                    lateral_velocity=cfg.lateral_velocity,
+                                                    position_tol = cfg.position_tol,)   
         wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
         # print(f"Modified wheel actions: {wheel_actions}\n")
         husky.apply_wheel_actions(wheel_actions)
@@ -169,6 +169,7 @@ while simulation_app.is_running():
             pick_controller = PickPlaceController(name="controller",
                                         robot_articulation=my_denso, 
                                         gripper=my_denso.gripper,
+                                        cfg=cfg,
                                         )
             task_params = my_world.get_task("denso_pick_place").get_params()
             articulation_controller = my_denso.get_articulation_controller()
@@ -181,7 +182,7 @@ while simulation_app.is_running():
             placing_position=observations[task_params["cube_name"]["value"]]["target_position"],
             current_joint_positions=observations[task_params["robot_name"]["value"]]["joint_positions"],
             # end_effector_offset=np.array([0, 0, 0.25]),
-            end_effector_offset=np.array([0, 0, 0.05]),
+            end_effector_offset=np.array(cfg.end_effector_offset),
         )
         ee_pose = observations[task_params["robot_name"]["value"]]["end_effector_position"]
         if pick_up_start:

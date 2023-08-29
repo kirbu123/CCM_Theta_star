@@ -1,0 +1,92 @@
+# general
+logging_level: 'INFO' # 10 #
+
+
+---
+# Background info
+
+background_stage_path: "/background"
+background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd" 
+
+---
+#Sensors info
+
+cameras:
+  action_graph_stage_path: "/World/Husky_Robot/ROS_Cameras"
+  zed:
+    stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
+    horizontal_aperture: 5.12
+    vertical_aperture: 2.88
+    projection_type: "perspective"
+    focal_length: 2.733857912
+  realsense_rear:
+    stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
+    horizontal_aperture: 5.12
+    vertical_aperture: 2.88
+    projection_type: "perspective"
+    focal_length: 2.733857912
+  realsense_front:
+    stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
+    horizontal_aperture: 5.12
+    vertical_aperture: 2.88
+    projection_type: "perspective"
+    focal_length: 2.733857912
+
+lidar:
+  lidar_stage_path: "/World/Husky_Robot/fence_link/fence_link_small/VLP_16/vlp16/rtx_lidar"
+  lidar_model: "VLP_16" # by config name <model>.json
+
+imu:
+  imu_stage_path: "/World/Husky_Robot/base_link/imu"
+
+---
+# Navigation info
+
+navigation_end: [1.4883547, 1.3499106, 0]
+target_position: [-0.3, 0.6, 0,02575] # [2] =  0.0515 / 2.0
+
+trajectory:
+  - [2, 2]
+
+lateral_velocity: 0.5
+position_tol: 0.1
+
+
+---
+# Pick and place task info
+
+target_position: [2.1, 1.7, 0]
+target_orientation: [1, 0, 0, 0] # qw, qx, qy, qz
+target_cube_size: [0.0515, 0.0515, 0.0515]
+target_cube_offset: null
+
+
+husky_target_pose: [1.6, 2.2, 0.02]
+end_effector_offset: [0, 0, 0.05]
+
+
+---
+# Controllers info
+
+control:
+  pick_place:
+    events_dt: [0.005, 0.002, 1, 0.05, 0.0008, 0.005, 0.0008, 0.1, 0.0008, 0.008]
+    end_effector_initial_height: 0.6
+
+
+---
+# Robot info
+
+husky_minimal_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky.usd"
+husky_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky_with_sensors.usd"
+husky_stage_path: "/World/Husky_Robot"
+husky_init_pose: [0, 0, 0.15]
+
+wheel_radius: 0.3
+wheel_base: 0.5
+
+ur5_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/ur5_with_gripper.usd"
+ur5_stage_path: "/World/ur5"
+end_effector_stage_path: "/World/ur5/robotiq_85_base_link"
+
+connection_joint_stage_path: "/World/connect_joint"

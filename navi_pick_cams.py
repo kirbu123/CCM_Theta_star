@@ -13,7 +13,6 @@ simulation_app = SimulationApp({"headless": False, "renderer": "RayTracedLightin
 
 import sys
 import os
-import argparse
 import numpy as np
 import carb
 import omni
@@ -41,21 +40,13 @@ from src.tasks.navigation import Navigate
 from src.tasks.follow_target import FollowTarget
 from src.controllers.rmpflow import RMPFlowController
 from src.controllers.pick_place import PickPlaceController
+from src.config import get_config, Config
+
+
+cfg = get_config()
 
 # enable ROS bridge extension
 extensions.enable_extension("omni.isaac.ros2_bridge-humble")
-
-CAMERA_STAGE_PATH = "/World/Husky_Robot/fence_link/zed/husky_front_left" # 
-LIDAR_STAGE_PATH = "/World/Husky_Robot/fence_link/fence_link_small/VLP_16/vlp16/rtx_lidar" # 
-IMU_STAGE_PATH = "/World/Husky_Robot/base_link/imu" #
-HUSKY_STAGE_PATH = "/World/Husky_Robot"
-ROS_CAMERA_GRAPH_PATH = "/World/Husky_Robot/ROS_Cameras"
-BACKGROUND_STAGE_PATH = "/background" # !
-BACKGROUND_USD_PATH = "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd" #!
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--test", default=False, action="store_true", help="Run in test mode")
-args, unknown = parser.parse_known_args()
 
 def add_goals(world, scene, goals):
     for i, (x, y) in enumerate(goals):
@@ -94,30 +85,24 @@ if assets_root_path is None:
     sys.exit()
 
 # Loading the simple_room environment
-stage.add_reference_to_stage(assets_root_path + BACKGROUND_USD_PATH, BACKGROUND_STAGE_PATH) #!
+stage.add_reference_to_stage(assets_root_path + cfg.background_usd_path, cfg.background_stage_path) #!
 
-traj=[[-2,-2]]
+# traj=[[-2,-2]]
 # traj=[[3,3], [3, -3], [-3, -3], [-3, 3], [0, 0]]
-
-navigation_end = np.array([1.4883547, 1.3499106, 0])
-target_position = np.array([-0.3, 0.6, 0])
-target_position[2] = 0.0515 / 2.0
 
 # traj_completed = False
 navigation_finish = False
 
 # Relative coordinates
-cube_size = np.array([0.0515, 0.0515, 0.0515]) / get_stage_units()
-relative_cube_init_position = np.array([0.3, 0.3, 0.3]) / get_stage_units()
-relative_cube_init_orientation = np.array([1, 0, 0, 0])
-relative_target_position = np.array([-0.3, -0.3, 0]) / get_stage_units()
-relative_target_position[2] = cube_size[2] / 2.0
+#TODO Do we need this relative coordinates?
+# cube_size = np.array([0.0515, 0.0515, 0.0515]) / get_stage_units()
+# relative_cube_init_position = np.array([0.3, 0.3, 0.3]) / get_stage_units()
+# relative_cube_init_orientation = np.array([1, 0, 0, 0])
+# relative_target_position = np.array([-0.3, -0.3, 0]) / get_stage_units()
+# relative_target_position[2] = cube_size[2] / 2.0
 
 pick_task = PickPlace(name="denso_pick_place",
-                      husky_asset_path=os.path.abspath("exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky_with_sensors.usd"),
-                      cube_initial_position=np.array([2.1, 1.7, 0]),
-                      cube_initial_orientation=np.array([1, 0, 0, 0]),
-                      target_position=np.array([1.6, 2.2, 0.02]),
+                      cfg=cfg,
                       )
 
 my_world.add_task(pick_task)
@@ -129,29 +114,30 @@ husky=pick_task.robots["husky"]
 
 scene={}
 
-add_goals(my_world, scene, traj)
+add_goals(my_world, scene, cfg.trajectory)
 my_world.reset()
 
 
 
 ####################################### Init Husky controller ################################
 husky_controller = WheelBasePoseController(name="cool_controller",
-                                                    open_loop_wheel_controller=
-                                                    DifferentialController(name="simple_control",
-                                                    wheel_radius=0.3, wheel_base=0.5),
-                                                    is_holonomic=False,)
+                                           open_loop_wheel_controller=
+                                           DifferentialController(name="simple_control",
+                                           wheel_radius=cfg.wheel_radius,
+                                           wheel_base=cfg.wheel_base),
+                                           is_holonomic=False,)
 articulation_controller = my_denso.get_articulation_controller()
 
 
 
 ##? set up cameras
 our_stage = get_current_stage()
-zed_left_camera_prim =  UsdGeom.Camera(our_stage.GetPrimAtPath(CAMERA_STAGE_PATH))
+zed_left_camera_prim =  UsdGeom.Camera(our_stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
 # zed_left_camera_prim = stage.GetPrimAtPath('/World/Husky_Robot/fence_link/zed/husky_front_right')
-zed_left_camera_prim.GetHorizontalApertureAttr().Set(5.12)
-zed_left_camera_prim.GetVerticalApertureAttr().Set(2.88)
-zed_left_camera_prim.GetProjectionAttr().Set("perspective")
-zed_left_camera_prim.GetFocalLengthAttr().Set( 2.733857912)
+zed_left_camera_prim.GetHorizontalApertureAttr().Set(cfg.cameras.zed.horizontal_aperture)
+zed_left_camera_prim.GetVerticalApertureAttr().Set(cfg.cameras.zed.vertical_aperture)
+zed_left_camera_prim.GetProjectionAttr().Set(cfg.cameras.zed.projection_type)
+zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras.zed.focal_length)
 # zed_left_camera_prim.GetFocusDistanceAttr().Set(400)
 
 # camera_prim = UsdGeom.Camera(stage.DefinePrim(CAMERA_STAGE_PATH))
@@ -210,17 +196,17 @@ except Exception as e:
 set_targets(
     prim=our_stage.GetPrimAtPath("/ActionGraph" + "/tfPublisher"),
     attribute="inputs:targetPrims",
-    target_prim_paths=[HUSKY_STAGE_PATH],
+    target_prim_paths=[cfg.husky_stage_path],
 )
 set_targets(
     prim=our_stage.GetPrimAtPath("/ActionGraph" + "/lidarTfPublisher"),
     attribute="inputs:parentPrim",
-    target_prim_paths=["/World/Husky_Robot/fence_link"],
+    target_prim_paths=[f"{cfg.husky_stage_path}/fence_link"],
 )
 set_targets(
     prim=our_stage.GetPrimAtPath("/ActionGraph" + "/lidarTfPublisher"),
     attribute="inputs:targetPrims",
-    target_prim_paths=[LIDAR_STAGE_PATH],
+    target_prim_paths=[cfg.lidar.lidar_stage_path],
 )
 
 simulation_app.update()
@@ -230,7 +216,7 @@ simulation_app.update()
 keys = og.Controller.Keys
 (ros_camera_graph, _, _, _) = og.Controller.edit(
     {
-        "graph_path": ROS_CAMERA_GRAPH_PATH,
+        "graph_path": cfg.cameras.action_graph_stage_path,
         "evaluator_name": "execution",
         # "pipeline_stage": og.GraphPipelineStage.GRAPH_PIPELINE_STAGE_ONDEMAND,
     },
@@ -329,23 +315,23 @@ keys = og.Controller.Keys
 ##* ##########################
 
 set_targets(
-    prim=our_stage.GetPrimAtPath(ROS_CAMERA_GRAPH_PATH + "/setCamera"),
+    prim=our_stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/setCamera"),
     attribute="inputs:cameraPrim",
-    target_prim_paths=[CAMERA_STAGE_PATH],
+    target_prim_paths=[cfg.cameras.zed.stage_path],
 )
 
 ##? IMU
 set_targets(
-    prim=our_stage.GetPrimAtPath(ROS_CAMERA_GRAPH_PATH + "/imuReader"),
+    prim=our_stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/imuReader"),
     attribute="inputs:imuPrim",
-    target_prim_paths=[IMU_STAGE_PATH],
+    target_prim_paths=[cfg.imu.imu_stage_path],
 )
 
 ##? LiDAR
 set_targets(
-    prim=our_stage.GetPrimAtPath(ROS_CAMERA_GRAPH_PATH + "/createLiRenderProduct"),
+    prim=our_stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/createLiRenderProduct"),
     attribute="inputs:cameraPrim",
-    target_prim_paths=[LIDAR_STAGE_PATH],
+    target_prim_paths=[cfg.lidar.lidar_stage_path],
 )
 
 
@@ -408,7 +394,7 @@ while simulation_app.is_running():
     my_world.step(render=True)
     if my_world.is_playing():
         if not navigation_finish:
-            for i, milestone in enumerate(traj):
+            for i, milestone in enumerate(cfg.trajectory):
                 milestone = np.asarray(milestone)
                 # print(f"\nCurr goal: {milestone}")
                 distance = 100
@@ -424,8 +410,8 @@ while simulation_app.is_running():
                     wheel_actions=husky_controller.forward(start_position=position,
                                                                         start_orientation=orientation,
                                                                         goal_position=milestone,
-                                                                        lateral_velocity=0.5,
-                                                                        position_tol = 0.1,)
+                                                                        lateral_velocity=cfg.lateral_velocity,
+                                                                        position_tol = cfg.position_tol,)
                     # print(f"Wheel actions: {wheel_actions}")
                     wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
                     # print(f"Modified wheel actions: {wheel_actions}\n")
@@ -443,8 +429,8 @@ while simulation_app.is_running():
         wheel_actions=husky_controller.forward(start_position=end_position,
                                                     start_orientation=end_orientation,
                                                     goal_position=end_position,
-                                                    lateral_velocity=0.5,
-                                                    position_tol = 0.1,)   
+                                                    lateral_velocity=cfg.lateral_velocity,
+                                                    position_tol = cfg.position_tol,)   
         wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
         # print(f"Modified wheel actions: {wheel_actions}\n")
         husky.apply_wheel_actions(wheel_actions)
@@ -459,6 +445,7 @@ while simulation_app.is_running():
             pick_controller = PickPlaceController(name="controller",
                                         robot_articulation=my_denso, 
                                         gripper=my_denso.gripper,
+                                        cfg=cfg,
                                         )
             task_params = my_world.get_task("denso_pick_place").get_params()
             articulation_controller = my_denso.get_articulation_controller()
@@ -471,7 +458,7 @@ while simulation_app.is_running():
             placing_position=observations[task_params["cube_name"]["value"]]["target_position"],
             current_joint_positions=observations[task_params["robot_name"]["value"]]["joint_positions"],
             # end_effector_offset=np.array([0, 0, 0.25]),
-            end_effector_offset=np.array([0, 0, 0.05]),
+            end_effector_offset=np.array(cfg.end_effector_offset),
         )
         ee_pose = observations[task_params["robot_name"]["value"]]["end_effector_position"]
         if pick_up_start:
