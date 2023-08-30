@@ -7,22 +7,36 @@ from omni.isaac.core.utils.prims import set_targets
 from src.config import Config
 
 
-def setup_cameras_prims(cfg: Config, simulation_app: SimulationApp, stage: Stage):
-    zed_left_camera_prim =  UsdGeom.Camera(stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
-    # zed_left_camera_prim = stage.GetPrimAtPath('/World/Husky_Robot/fence_link/zed/husky_front_right')
-    zed_left_camera_prim.GetHorizontalApertureAttr().Set(cfg.cameras.zed.horizontal_aperture)
-    zed_left_camera_prim.GetVerticalApertureAttr().Set(cfg.cameras.zed.vertical_aperture)
-    zed_left_camera_prim.GetProjectionAttr().Set(cfg.cameras.zed.projection_type)
-    zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras.zed.focal_length)
-    # zed_left_camera_prim.GetFocusDistanceAttr().Set(400)
+def setup_cameras(cfg: Config, 
+                  simulation_app: SimulationApp,
+                  stage: Stage,
+                  cameras_list: list = None):
 
-    simulation_app.update()
+    if cameras_list is None:
+        cameras_list = cfg.cameras.cameras_list
 
-def setup_cameras_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
-    '''Setup the action graph for publishing Images, Depths and CameraInfo to ROS2'''
+    graph_controller = setup_cameras_graph(cfg, simulation_app)
 
+    for camera_name in cameras_list:
+
+        zed_left_camera_prim =  UsdGeom.Camera(stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
+        # zed_left_camera_prim = stage.GetPrimAtPath('/World/Husky_Robot/fence_link/zed/husky_front_right')
+        zed_left_camera_prim.GetHorizontalApertureAttr().Set(cfg.cameras[camera_name].horizontal_aperture)
+        zed_left_camera_prim.GetVerticalApertureAttr().Set(cfg.cameras[camera_name].vertical_aperture)
+        zed_left_camera_prim.GetProjectionAttr().Set(cfg.cameras[camera_name].projection_type)
+        zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras[camera_name].focal_length)
+        # zed_left_camera_prim.GetFocusDistanceAttr().Set(400)
+        simulation_app.update()
+
+        setup_camera_graph(cfg, simulation_app, stage, graph_controller, camera_name)
+
+
+def setup_cameras_graph(cfg: Config,
+                        simulation_app: SimulationApp) -> og.Controller:
     keys = og.Controller.Keys
-    (ros_camera_graph, _, _, _) = og.Controller.edit(
+    controller = og.Controller(graph_id ="ros_cameras_graph")
+
+    (graph, _, _, _) = controller.edit(
         {
             "graph_path": cfg.cameras.action_graph_stage_path,
             "evaluator_name": "execution",
@@ -31,38 +45,60 @@ def setup_cameras_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage
         {
             keys.CREATE_NODES: [
                 ("OnTick", "omni.graph.action.OnPlaybackTick"),
-                ("createViewport", "omni.isaac.core_nodes.IsaacCreateViewport"),
-                ("getRenderProduct", "omni.isaac.core_nodes.IsaacGetViewportRenderProduct"),
-                ("setCamera", "omni.isaac.core_nodes.IsaacSetCameraOnRenderProduct"),
-                ("cameraHelperRgb", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-                ("cameraHelperInfo", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-                ("cameraHelperDepth", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
+            ]
+        }
+    )
+
+    simulation_app.update()
+    return controller
+
+def setup_camera_graph(cfg: Config,
+                       simulation_app: SimulationApp,
+                       stage: Stage,
+                       controller: og.Controller,
+                       camera_name: str):
+    '''Setup the action graph for publishing Images, Depths and CameraInfo to ROS2'''
+
+    keys = og.Controller.Keys
+    graph = og.get_graph_by_path(cfg.cameras.action_graph_stage_path)
+    # controller = og.Controller(graph_id=cfg.cameras.action_graph_id)
+    controller.edit(
+        graph,
+        {
+            keys.CREATE_NODES: [
+                # ("OnTick", "omni.graph.action.OnPlaybackTick"),
+                (f"create_{camera_name}Viewport", "omni.isaac.core_nodes.IsaacCreateViewport"),
+                (f"get_{camera_name}RenderProduct", "omni.isaac.core_nodes.IsaacGetViewportRenderProduct"),
+                (f"set_{camera_name}Camera", "omni.isaac.core_nodes.IsaacSetCameraOnRenderProduct"),
+                (f"camera_{camera_name}HelperRgb", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
+                (f"camera_{camera_name}HelperInfo", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
+                (f"camera_{camera_name}HelperDepth", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
             ],
             keys.CONNECT: [
-                ("OnTick.outputs:tick", "createViewport.inputs:execIn"),
-                ("createViewport.outputs:execOut", "getRenderProduct.inputs:execIn"),
-                ("createViewport.outputs:viewport", "getRenderProduct.inputs:viewport"),
-                ("getRenderProduct.outputs:execOut", "setCamera.inputs:execIn"),
-                ("getRenderProduct.outputs:renderProductPath", "setCamera.inputs:renderProductPath"),
-                ("setCamera.outputs:execOut", "cameraHelperRgb.inputs:execIn"),
-                ("setCamera.outputs:execOut", "cameraHelperInfo.inputs:execIn"),
-                ("setCamera.outputs:execOut", "cameraHelperDepth.inputs:execIn"),
-                ("getRenderProduct.outputs:renderProductPath", "cameraHelperRgb.inputs:renderProductPath"),
-                ("getRenderProduct.outputs:renderProductPath", "cameraHelperInfo.inputs:renderProductPath"),
-                ("getRenderProduct.outputs:renderProductPath", "cameraHelperDepth.inputs:renderProductPath"),
+                ("OnTick.outputs:tick", f"create_{camera_name}Viewport.inputs:execIn"),
+                (f"create_{camera_name}Viewport.outputs:execOut", f"get_{camera_name}RenderProduct.inputs:execIn"),
+                (f"create_{camera_name}Viewport.outputs:viewport", f"get_{camera_name}RenderProduct.inputs:viewport"),
+                (f"get_{camera_name}RenderProduct.outputs:execOut", f"set_{camera_name}Camera.inputs:execIn"),
+                (f"get_{camera_name}RenderProduct.outputs:renderProductPath", f"set_{camera_name}Camera.inputs:renderProductPath"),
+                (f"set_{camera_name}Camera.outputs:execOut", f"camera_{camera_name}HelperRgb.inputs:execIn"),
+                (f"set_{camera_name}Camera.outputs:execOut", f"camera_{camera_name}HelperInfo.inputs:execIn"),
+                (f"set_{camera_name}Camera.outputs:execOut", f"camera_{camera_name}HelperDepth.inputs:execIn"),
+                (f"get_{camera_name}RenderProduct.outputs:renderProductPath", f"camera_{camera_name}HelperRgb.inputs:renderProductPath"),
+                (f"get_{camera_name}RenderProduct.outputs:renderProductPath", f"camera_{camera_name}HelperInfo.inputs:renderProductPath"),
+                (f"get_{camera_name}RenderProduct.outputs:renderProductPath", f"camera_{camera_name}HelperDepth.inputs:renderProductPath"),
 
             ],
             keys.SET_VALUES: [
-                ("createViewport.inputs:viewportId", 0),
-                ("cameraHelperRgb.inputs:frameId", "sim_camera"),
-                ("cameraHelperRgb.inputs:topicName", "rgb"),
-                ("cameraHelperRgb.inputs:type", "rgb"),
-                ("cameraHelperInfo.inputs:frameId", "sim_camera"),
-                ("cameraHelperInfo.inputs:topicName", "camera_info"),
-                ("cameraHelperInfo.inputs:type", "camera_info"),
-                ("cameraHelperDepth.inputs:frameId", "sim_camera"),
-                ("cameraHelperDepth.inputs:topicName", "depth"),
-                ("cameraHelperDepth.inputs:type", "depth"),
+                (f"create_{camera_name}Viewport.inputs:viewportId", cfg.cameras.cameras_list.index(camera_name)),
+                (f"camera_{camera_name}HelperRgb.inputs:frameId", f"{camera_name}_sim_camera"),
+                (f"camera_{camera_name}HelperRgb.inputs:topicName", f"{camera_name}_rgb"),
+                (f"camera_{camera_name}HelperRgb.inputs:type", "rgb"),
+                (f"camera_{camera_name}HelperInfo.inputs:frameId", "sim_camera"),
+                (f"camera_{camera_name}HelperInfo.inputs:topicName", f"{camera_name}_camera_info"),
+                (f"camera_{camera_name}HelperInfo.inputs:type", "camera_info"),
+                (f"camera_{camera_name}HelperDepth.inputs:frameId", f"{camera_name}_sim_camera"),
+                (f"camera_{camera_name}HelperDepth.inputs:topicName", f"{camera_name}_depth"),
+                (f"camera_{camera_name}HelperDepth.inputs:type", "depth"),
             ],
         },
     )
@@ -70,10 +106,10 @@ def setup_cameras_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage
     ##* ##########################
 
     set_targets(
-        prim=stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/setCamera"),
+        prim=stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + f"/set_{camera_name}Camera"),
         attribute="inputs:cameraPrim",
-        target_prim_paths=[cfg.cameras.zed.stage_path],
+        target_prim_paths=[cfg.cameras[camera_name].stage_path],
     )
     simulation_app.update()
     
-    og.Controller.evaluate_sync(ros_camera_graph)
+    controller.evaluate_sync(graph)

@@ -15,7 +15,9 @@ tf:
   action_graph_path: "/World/Husky_Robot/TF"
 
 cameras:
+  cameras_list: ["zed", "realsense_rear", "realsense_front"] # default list for setup ros publishers
   action_graph_stage_path: "/World/Husky_Robot/ROS_Cameras"
+  action_graph_id: "" # Leave it empty, it's placeholder 
   zed:
     stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
     horizontal_aperture: 5.12
@@ -23,17 +25,17 @@ cameras:
     projection_type: "perspective"
     focal_length: 2.733857912
   realsense_rear:
-    stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
-    horizontal_aperture: 5.12
-    vertical_aperture: 2.88
+    stage_path: "/World/Husky_Robot/fence_link/realsense/husky_rear_left"
+    horizontal_aperture: 3.84
+    vertical_aperture: 2.16
     projection_type: "perspective"
-    focal_length: 2.733857912
+    focal_length: 2.731496598
   realsense_front:
     stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
-    horizontal_aperture: 5.12
-    vertical_aperture: 2.88
+    horizontal_aperture: 3.84
+    vertical_aperture: 2.16
     projection_type: "perspective"
-    focal_length: 2.733857912
+    focal_length: 2.731496598
 
 lidar:
   action_graph_path: "/World/Husky_Robot/LiDAR"
@@ -63,7 +65,7 @@ position_tol: 0.1
 target_position: [2.1, 1.7, 0]
 target_orientation: [1, 0, 0, 0] # qw, qx, qy, qz
 target_cube_size: [0.0515, 0.0515, 0.0515]
-target_cube_offset: null
+target_cube_offset: null # Python read it as None
 
 
 husky_target_pose: [1.6, 2.2, 0.02]

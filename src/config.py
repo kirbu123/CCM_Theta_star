@@ -26,6 +26,10 @@ class Config:
 
     def __repr__(self):
         return self.__str__()
+    
+    def __getitem__(self, key):
+        # Allows accessing the attributes using dictionary-like key indexing
+        return getattr(self, key)
 
 def add_args_from_cfg(parser: argparse.ArgumentParser, cfg: Config, prefix=''):
     for item in cfg: # type: ignore

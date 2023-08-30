@@ -42,7 +42,7 @@ from src.controllers.rmpflow import RMPFlowController
 from src.controllers.pick_place import PickPlaceController
 from src.config import get_config, Config
 from src.sensors.tf import setup_tf_graph
-from src.sensors.cameras import setup_cameras_graph, setup_cameras_prims
+from src.sensors.cameras import setup_cameras_graph, setup_cameras
 from src.sensors.lidar import setup_lidar_graph
 from src.sensors.imu import setup_imu_graph
 
@@ -144,8 +144,6 @@ our_stage = get_current_stage()
 # zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras.zed.focal_length)
 # zed_left_camera_prim.GetFocusDistanceAttr().Set(400)
 
-setup_cameras_prims(cfg, simulation_app, our_stage)
-
 # camera_prim = UsdGeom.Camera(stage.DefinePrim(CAMERA_STAGE_PATH))
 # xform_api = UsdGeom.XformCommonAPI(camera_prim)
 # xform_api.SetTranslate(Gf.Vec3d(0.04676, 0.05, 0.05))
@@ -157,9 +155,9 @@ setup_cameras_prims(cfg, simulation_app, our_stage)
 # camera_prim.GetFocusDistanceAttr().Set(400)
 
 simulation_app.update()
+setup_cameras(cfg, simulation_app, our_stage, ["zed", "realsense_rear"])
 
 setup_tf_graph(cfg, simulation_app, our_stage)
-setup_cameras_graph(cfg, simulation_app, our_stage)
 setup_lidar_graph(cfg, simulation_app, our_stage)
 setup_imu_graph(cfg, simulation_app, our_stage)
 
