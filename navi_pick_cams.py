@@ -41,6 +41,10 @@ from src.tasks.follow_target import FollowTarget
 from src.controllers.rmpflow import RMPFlowController
 from src.controllers.pick_place import PickPlaceController
 from src.config import get_config, Config
+from src.sensors.tf import setup_tf_graph
+from src.sensors.cameras import setup_cameras_graph, setup_cameras_prims
+from src.sensors.lidar import setup_lidar_graph
+from src.sensors.imu import setup_imu_graph
 
 
 cfg = get_config()
@@ -132,13 +136,15 @@ articulation_controller = my_denso.get_articulation_controller()
 
 ##? set up cameras
 our_stage = get_current_stage()
-zed_left_camera_prim =  UsdGeom.Camera(our_stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
-# zed_left_camera_prim = stage.GetPrimAtPath('/World/Husky_Robot/fence_link/zed/husky_front_right')
-zed_left_camera_prim.GetHorizontalApertureAttr().Set(cfg.cameras.zed.horizontal_aperture)
-zed_left_camera_prim.GetVerticalApertureAttr().Set(cfg.cameras.zed.vertical_aperture)
-zed_left_camera_prim.GetProjectionAttr().Set(cfg.cameras.zed.projection_type)
-zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras.zed.focal_length)
+# zed_left_camera_prim =  UsdGeom.Camera(our_stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
+# # zed_left_camera_prim = stage.GetPrimAtPath('/World/Husky_Robot/fence_link/zed/husky_front_right')
+# zed_left_camera_prim.GetHorizontalApertureAttr().Set(cfg.cameras.zed.horizontal_aperture)
+# zed_left_camera_prim.GetVerticalApertureAttr().Set(cfg.cameras.zed.vertical_aperture)
+# zed_left_camera_prim.GetProjectionAttr().Set(cfg.cameras.zed.projection_type)
+# zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras.zed.focal_length)
 # zed_left_camera_prim.GetFocusDistanceAttr().Set(400)
+
+setup_cameras_prims(cfg, simulation_app, our_stage)
 
 # camera_prim = UsdGeom.Camera(stage.DefinePrim(CAMERA_STAGE_PATH))
 # xform_api = UsdGeom.XformCommonAPI(camera_prim)
@@ -152,239 +158,10 @@ zed_left_camera_prim.GetFocalLengthAttr().Set(cfg.cameras.zed.focal_length)
 
 simulation_app.update()
 
-
-
-##? Set up LiDAR
-
-##? ##############
-
-##? #######################
-
-# Creating a action graph with ROS component nodes
-try:
-    og.Controller.edit(
-        {"graph_path": "/ActionGraph", "evaluator_name": "execution"},
-        {
-            og.Controller.Keys.CREATE_NODES: [
-                ##* TF Tree
-                ("OnTick", "omni.graph.action.OnTick"),
-                ("PublishClock", "omni.isaac.ros2_bridge.ROS2PublishClock"),
-                ("rosContext", "omni.isaac.ros2_bridge.ROS2Context"),
-                ("tfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
-                ("ReadSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
-
-                ("lidarTfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
-            ],
-            og.Controller.Keys.CONNECT: [
-                ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
-                ("rosContext.outputs:context", "PublishClock.inputs:context"),
-                ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
-                ("OnTick.outputs:tick", "lidarTfPublisher.inputs:execIn"),
-                ("rosContext.outputs:context", "tfPublisher.inputs:context"),
-                ("rosContext.outputs:context", "lidarTfPublisher.inputs:context"),
-                ("ReadSimTime.outputs:simulationTime", "tfPublisher.inputs:timeStamp"),
-                ("ReadSimTime.outputs:simulationTime", "lidarTfPublisher.inputs:timeStamp"),
-                ("ReadSimTime.outputs:simulationTime", "PublishClock.inputs:timeStamp"),
-            ],
-            # og.Controller.Keys.SET_VALUES: [],
-        },
-    )
-except Exception as e:
-    print(e)
-
-##* TF Tree
-set_targets(
-    prim=our_stage.GetPrimAtPath("/ActionGraph" + "/tfPublisher"),
-    attribute="inputs:targetPrims",
-    target_prim_paths=[cfg.husky_stage_path],
-)
-set_targets(
-    prim=our_stage.GetPrimAtPath("/ActionGraph" + "/lidarTfPublisher"),
-    attribute="inputs:parentPrim",
-    target_prim_paths=[f"{cfg.husky_stage_path}/fence_link"],
-)
-set_targets(
-    prim=our_stage.GetPrimAtPath("/ActionGraph" + "/lidarTfPublisher"),
-    attribute="inputs:targetPrims",
-    target_prim_paths=[cfg.lidar.lidar_stage_path],
-)
-
-simulation_app.update()
-
-
-##* Set up Action Graph
-keys = og.Controller.Keys
-(ros_camera_graph, _, _, _) = og.Controller.edit(
-    {
-        "graph_path": cfg.cameras.action_graph_stage_path,
-        "evaluator_name": "execution",
-        # "pipeline_stage": og.GraphPipelineStage.GRAPH_PIPELINE_STAGE_ONDEMAND,
-    },
-    {
-        keys.CREATE_NODES: [
-            ("OnTick", "omni.graph.action.OnPlaybackTick"),
-            ("createViewport", "omni.isaac.core_nodes.IsaacCreateViewport"),
-            ("getRenderProduct", "omni.isaac.core_nodes.IsaacGetViewportRenderProduct"),
-            ("setCamera", "omni.isaac.core_nodes.IsaacSetCameraOnRenderProduct"),
-            ("cameraHelperRgb", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-            ("cameraHelperInfo", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-            ("cameraHelperDepth", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-
-            ##? IMU
-            ("imuReader", "omni.isaac.sensor.IsaacReadIMU"),
-            ("publishImu", "omni.isaac.ros2_bridge.ROS2PublishImu"),
-            ("readSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
-
-            ##? LiDAR
-            ("createLiRenderProduct", "omni.isaac.core_nodes.IsaacCreateRenderProduct"),
-            ("lidarHelperMsg", "omni.isaac.ros2_bridge.ROS2RtxLidarHelper"),
-            ("lidarHelperPointcloud", "omni.isaac.ros2_bridge.ROS2RtxLidarHelper"),
-
-            # ##* TF Tree
-            # ("PublishClock", "omni.isaac.ros2_bridge.ROS2PublishClock"),
-            # ("rosContext", "omni.isaac.ros2_bridge.ROS2Context"),
-            # ("tfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
-            # ("readSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
-        ],
-        keys.CONNECT: [
-            ("OnTick.outputs:tick", "createViewport.inputs:execIn"),
-            ("createViewport.outputs:execOut", "getRenderProduct.inputs:execIn"),
-            ("createViewport.outputs:viewport", "getRenderProduct.inputs:viewport"),
-            ("getRenderProduct.outputs:execOut", "setCamera.inputs:execIn"),
-            ("getRenderProduct.outputs:renderProductPath", "setCamera.inputs:renderProductPath"),
-            ("setCamera.outputs:execOut", "cameraHelperRgb.inputs:execIn"),
-            ("setCamera.outputs:execOut", "cameraHelperInfo.inputs:execIn"),
-            ("setCamera.outputs:execOut", "cameraHelperDepth.inputs:execIn"),
-            ("getRenderProduct.outputs:renderProductPath", "cameraHelperRgb.inputs:renderProductPath"),
-            ("getRenderProduct.outputs:renderProductPath", "cameraHelperInfo.inputs:renderProductPath"),
-            ("getRenderProduct.outputs:renderProductPath", "cameraHelperDepth.inputs:renderProductPath"),
-
-            ##? IMU
-            ("OnTick.outputs:tick", "imuReader.inputs:execIn"),
-            ("imuReader.outputs:execOut", "publishImu.inputs:execIn"),
-            ("imuReader.outputs:angVel", "publishImu.inputs:angularVelocity"),
-            ("imuReader.outputs:linAcc", "publishImu.inputs:linearAcceleration"),
-            ("imuReader.outputs:orientation", "publishImu.inputs:orientation"),
-            ("readSimTime.outputs:simulationTime", "publishImu.inputs:timeStamp"),
-            
-
-            ##? LiDAR
-            ("OnTick.outputs:tick", "createLiRenderProduct.inputs:execIn"),
-            ("createLiRenderProduct.outputs:execOut", "lidarHelperMsg.inputs:execIn"),
-            ("createLiRenderProduct.outputs:execOut", "lidarHelperPointcloud.inputs:execIn"),
-            ("createLiRenderProduct.outputs:renderProductPath", "lidarHelperMsg.inputs:renderProductPath"),
-            ("createLiRenderProduct.outputs:renderProductPath", "lidarHelperPointcloud.inputs:renderProductPath"),
-
-             ##* TF Tree
-            #  ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
-            #  ("rosContext.outputs:context", "PublishClock.inputs:context"),
-            #  ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
-            #  ("rosContext.outputs:context", "tfPublisher.inputs:context"),
-            #  ("rosContext.outputs:context", "lidarHelperMsg.inputs:context"),
-            #  ("rosContext.outputs:context", "lidarHelperPointcloud.inputs:context"),
-            #  ("rosContext.outputs:context", "cameraHelperRgb.inputs:context"),
-            #  ("rosContext.outputs:context", "cameraHelperInfo.inputs:context"),
-            #  ("rosContext.outputs:context", "cameraHelperDepth.inputs:context"),
-            #  ("readSimTime.outputs:simulationTime", "tfPublisher.inputs:timeStamp"),
-            #  ("readSimTime.outputs:simulationTime", "PublishClock.inputs:timeStamp"),
-        ],
-        keys.SET_VALUES: [
-            ("createViewport.inputs:viewportId", 0),
-            ("cameraHelperRgb.inputs:frameId", "sim_camera"),
-            ("cameraHelperRgb.inputs:topicName", "rgb"),
-            ("cameraHelperRgb.inputs:type", "rgb"),
-            ("cameraHelperInfo.inputs:frameId", "sim_camera"),
-            ("cameraHelperInfo.inputs:topicName", "camera_info"),
-            ("cameraHelperInfo.inputs:type", "camera_info"),
-            ("cameraHelperDepth.inputs:frameId", "sim_camera"),
-            ("cameraHelperDepth.inputs:topicName", "depth"),
-            ("cameraHelperDepth.inputs:type", "depth"),
-
-            ##? IMU
-            ("publishImu.inputs:topicName", "imu"),
-            ("publishImu.inputs:frameId", "sim_imu"),
-
-            ##? LiDAR
-            ("lidarHelperPointcloud.inputs:topicName", "point_cloud"),
-            ("lidarHelperPointcloud.inputs:frameId", "rtx_lidar"),
-            ("lidarHelperPointcloud.inputs:type", "point_cloud"),
-        ],
-    },
-)
-
-##* ##########################
-
-set_targets(
-    prim=our_stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/setCamera"),
-    attribute="inputs:cameraPrim",
-    target_prim_paths=[cfg.cameras.zed.stage_path],
-)
-
-##? IMU
-set_targets(
-    prim=our_stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/imuReader"),
-    attribute="inputs:imuPrim",
-    target_prim_paths=[cfg.imu.imu_stage_path],
-)
-
-##? LiDAR
-set_targets(
-    prim=our_stage.GetPrimAtPath(cfg.cameras.action_graph_stage_path + "/createLiRenderProduct"),
-    attribute="inputs:cameraPrim",
-    target_prim_paths=[cfg.lidar.lidar_stage_path],
-)
-
-
-
-# Run the ROS Camera graph once to generate ROS image publishers in SDGPipeline
-og.Controller.evaluate_sync(ros_camera_graph)
-
-simulation_app.update()
-
-# Inside the SDGPipeline graph, Isaac Simulation Gate nodes are added to control the execution rate of each of the ROS image and camera info publishers.
-# By default the step input of each Isaac Simulation Gate node is set to a value of 1 to execute every frame.
-# We can change this value to N for each Isaac Simulation Gate node individually to publish every N number of frames.
-viewport_api = get_active_viewport()
-
-if viewport_api is not None:
-    import omni.syntheticdata._syntheticdata as sd
-
-    # Get name of rendervar for RGB sensor type
-    rv_rgb = omni.syntheticdata.SyntheticData.convert_sensor_type_to_rendervar(sd.SensorType.Rgb.name)
-
-    # Get path to IsaacSimulationGate node in RGB pipeline
-    rgb_camera_gate_path = omni.syntheticdata.SyntheticData._get_node_path(
-        rv_rgb + "IsaacSimulationGate", viewport_api.get_render_product_path()
-    )
-
-    # Get name of rendervar for DistanceToImagePlane sensor type
-    rv_depth = omni.syntheticdata.SyntheticData.convert_sensor_type_to_rendervar(
-        sd.SensorType.DistanceToImagePlane.name
-    )
-
-    # Get path to IsaacSimulationGate node in Depth pipeline
-    depth_camera_gate_path = omni.syntheticdata.SyntheticData._get_node_path(
-        rv_depth + "IsaacSimulationGate", viewport_api.get_render_product_path()
-    )
-
-    # Get path to IsaacSimulationGate node in CameraInfo pipeline
-    camera_info_gate_path = omni.syntheticdata.SyntheticData._get_node_path(
-        "PostProcessDispatch" + "IsaacSimulationGate", viewport_api.get_render_product_path()
-    )
-
-    # Set Rgb execution step to 5 frames
-    rgb_step_size = 5
-
-    # Set Depth execution step to 60 frames
-    depth_step_size = 10
-
-    # Set Camera info execution step to every frame
-    info_step_size = 1
-
-    # Set step input of the Isaac Simulation Gate nodes upstream of ROS publishers to control their execution rate
-    # og.Controller.attribute(rgb_camera_gate_path + ".inputs:step").set(rgb_step_size)
-    # og.Controller.attribute(depth_camera_gate_path + ".inputs:step").set(depth_step_size)
-    # og.Controller.attribute(camera_info_gate_path + ".inputs:step").set(info_step_size)
+setup_tf_graph(cfg, simulation_app, our_stage)
+setup_cameras_graph(cfg, simulation_app, our_stage)
+setup_lidar_graph(cfg, simulation_app, our_stage)
+setup_imu_graph(cfg, simulation_app, our_stage)
 
 # Need to initialize physics getting any articulation..etc
 my_world.initialize_physics()

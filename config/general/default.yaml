@@ -11,6 +11,9 @@ background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forkli
 ---
 #Sensors info
 
+tf:
+  action_graph_path: "/World/Husky_Robot/TF"
+
 cameras:
   action_graph_stage_path: "/World/Husky_Robot/ROS_Cameras"
   zed:
@@ -33,10 +36,12 @@ cameras:
     focal_length: 2.733857912
 
 lidar:
+  action_graph_path: "/World/Husky_Robot/LiDAR"
   lidar_stage_path: "/World/Husky_Robot/fence_link/fence_link_small/VLP_16/vlp16/rtx_lidar"
   lidar_model: "VLP_16" # by config name <model>.json
 
 imu:
+  action_graph_path: "/World/Husky_Robot/IMU"
   imu_stage_path: "/World/Husky_Robot/base_link/imu"
 
 ---
