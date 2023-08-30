@@ -81,7 +81,7 @@ class PickPlace(tasks.PickPlace):
         # print(f"fixed_joint: {fixed_joint}\n")
 
         fixed_joint.GetBody0Rel().SetTargets([f"{self.cfg.husky_stage_path}/put_ur5"])  #[0.3312 0 0.25178]
-        fixed_joint.GetBody1Rel().SetTargets([f"{self.cfg.ur5_stage_path}/world"])
+        fixed_joint.GetBody1Rel().SetTargets([f"{self.cfg.ur5_stage_path}/ur5_base_link"])
         fixed_joint.GetExcludeFromArticulationAttr().Set(True)
         #########################################################################	
         return

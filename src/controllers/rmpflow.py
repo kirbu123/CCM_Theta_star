@@ -15,6 +15,7 @@ import os
 
 
 
+#TODO rename corretly used configs (yaml, rmpflow, urdf)
 class RMPFlowController(mg.MotionPolicyController):
     def __init__(self, name: str, robot_articulation: Articulation, physics_dt: float = 1.0 / 60.0) -> None:
         self.rmpflow = mg.lula.motion_policies.RmpFlow(

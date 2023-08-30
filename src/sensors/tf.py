@@ -17,20 +17,30 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                     ("OnTick", "omni.graph.action.OnTick"),
                     ("PublishClock", "omni.isaac.ros2_bridge.ROS2PublishClock"),
                     ("rosContext", "omni.isaac.ros2_bridge.ROS2Context"),
-                    ("tfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
                     ("ReadSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
-
+                    # husky
+                    ("tfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
+                    # lidar
                     ("lidarTfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
+                    # ur5
+                    ("ur5TfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
                 ],
                 og.Controller.Keys.CONNECT: [
                     ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
                     ("rosContext.outputs:context", "PublishClock.inputs:context"),
+
                     ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
                     ("OnTick.outputs:tick", "lidarTfPublisher.inputs:execIn"),
+                    ("OnTick.outputs:tick", "ur5TfPublisher.inputs:execIn"),
+
                     ("rosContext.outputs:context", "tfPublisher.inputs:context"),
                     ("rosContext.outputs:context", "lidarTfPublisher.inputs:context"),
+                    ("rosContext.outputs:context", "ur5TfPublisher.inputs:context"),
+                    
                     ("ReadSimTime.outputs:simulationTime", "tfPublisher.inputs:timeStamp"),
                     ("ReadSimTime.outputs:simulationTime", "lidarTfPublisher.inputs:timeStamp"),
+                    ("ReadSimTime.outputs:simulationTime", "ur5TfPublisher.inputs:timeStamp"),
+
                     ("ReadSimTime.outputs:simulationTime", "PublishClock.inputs:timeStamp"),
                 ],
                 # og.Controller.Keys.SET_VALUES: [],
@@ -54,6 +64,16 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
         prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/lidarTfPublisher"),
         attribute="inputs:targetPrims",
         target_prim_paths=[cfg.lidar.lidar_stage_path],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/ur5TfPublisher"),
+        attribute="inputs:parentPrim",
+        target_prim_paths=[f"{cfg.husky_stage_path}/put_ur5"],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/ur5TfPublisher"),
+        attribute="inputs:targetPrims",
+        target_prim_paths=[cfg.ur5_stage_path],
     )
 
     simulation_app.update()
