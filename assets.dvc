@@ -1,6 +1,6 @@
 outs:
-- md5: dbfb955b300ba99284a39781ab1fb3d0.dir
-  size: 99903270
-  nfiles: 3
+- md5: 34b9cea4d28a2fcbbfe8dd1d2ae12026.dir
+  size: 111886776
+  nfiles: 4
   hash: md5
   path: assets

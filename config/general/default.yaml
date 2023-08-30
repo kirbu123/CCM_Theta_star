@@ -31,7 +31,7 @@ cameras:
     projection_type: "perspective"
     focal_length: 2.731496598
   realsense_front:
-    stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
+    stage_path: "/World/ur5/ur5_ee_link/realsense/husky_front_left"
     horizontal_aperture: 3.84
     vertical_aperture: 2.16
     projection_type: "perspective"
@@ -92,7 +92,8 @@ husky_init_pose: [0, 0, 0.15]
 wheel_radius: 0.3
 wheel_base: 0.5
 
-ur5_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/ur5_with_gripper.usd"
+ur5_usd_path_simple: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/ur5_with_gripper.usd"
+ur5_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/ur5_with_gripper_and_cam.usd"
 ur5_stage_path: "/World/ur5"
 end_effector_stage_path: "/World/ur5/robotiq_85_base_link"
 
