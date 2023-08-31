@@ -1,5 +1,5 @@
 ##################################################################################################
-# Конфиг для запуска демо-сценария (QuickStart) и черновик для новых конфигов
+# Конфиг для запуска демо-сценария в фотореалистичной модели 5го этажа МФТИ
 # author: Bezuglyj Vitaly
 ##################################################################################################
 
@@ -11,9 +11,9 @@ logging_level: 'INFO' # 10 #
 # Background info
 
 background_stage_path: "/background"
-use_background: true
-use_omni_background: false
-background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd" 
+use_background: true # If false load simple flat surface (less memory usage)
+use_omni_background: false # If true add prefix to path, set false for your own backgrounds
+background_usd_path: "" 
 
 ---
 #Sensors info
@@ -24,7 +24,7 @@ tf:
 cameras:
   cameras_list: ["zed", "realsense_rear", "realsense_front"] # default list for setup ros publishers
   action_graph_stage_path: "/World/Husky_Robot/ROS_Cameras"
-  action_graph_id: "" # Leave it empty, it's placeholder 
+
   zed:
     stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
     horizontal_aperture: 5.12
@@ -56,26 +56,33 @@ imu:
 ---
 # Navigation info
 
-# navigation_end: [1.4883547, 1.3499106, 0]
+# navigation_end: [17.34, 0.56, 0]
 # target_position: [-0.3, 0.6, 0,02575] # [2] =  0.0515 / 2.0
 
 trajectory:
-  - [2, 2]
+  - [13.5, 0.07] # Entry to polygon, middle
+  - [15.3, 0.13]
+  - [14.8, 1.37]
+  - [14.7, 2.9]
+  - [14.7, 2.9]
+  - [16.04, 2.58] # Entry to second room of polygon, middle
+  - [17.13, 2.58]
+  - [17.34, 0.56]
 
-lateral_velocity: 0.5
-position_tol: 0.1
+lateral_velocity: 0.7
+position_tol: 0.03
 
 
 ---
 # Pick and place task info
 
-target_position: [2.1, 1.7, 0]
-target_orientation: [1, 0, 0, 0] # qw, qx, qy, qz
+target_position: [17.7, 0.7, 0]  # cube position
+target_orientation: [1, 0, 0, 0] # qw, qx, qy, qz cube orientation
 target_cube_size: [0.0515, 0.0515, 0.0515]
 target_cube_offset: null # Python read it as None
 
 
-husky_target_pose: [1.6, 2.2, 0.02]
+husky_target_pose: [17.34, 0.56, 0.02]
 end_effector_offset: [0, 0, 0.05]
 
 
@@ -94,7 +101,7 @@ control:
 husky_minimal_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky.usd"
 husky_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky_with_sensors.usd"
 husky_stage_path: "/World/Husky_Robot"
-husky_init_pose: [0, 0, 0.15]
+husky_init_pose: [12.0, 0.07, 0.15]
 
 wheel_radius: 0.3
 wheel_base: 0.5

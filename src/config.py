@@ -8,7 +8,9 @@ import argparse
 from pprint import pprint, pformat
 import yaml
 
-_config_path = "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/general/default.yaml"
+# _config_path = "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/general/default.yaml"
+_config_dir = "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/general"
+_config_name = "default"
 
 class Config:
     """
@@ -148,11 +150,12 @@ def get_config():
     """
     parser = argparse.ArgumentParser(description="default name", add_help=False)
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    parser.add_argument("--config_path", type=str, default=_config_path,
+    parser.add_argument("--config_name", type=str, default=_config_name,
                         help="Config file path")
     path_args, _ = parser.parse_known_args() #type: ignore
-    config = parse_yaml2(path_args.config_path)
-    args = parse_cli_to_yaml(parser=parser, cfg=config, cfg_path=path_args.config_path)
+    config_path = os.path.join(_config_dir, f"{path_args.config_name}.yaml")
+    config = parse_yaml2(config_path)
+    args = parse_cli_to_yaml(parser=parser, cfg=config, cfg_path=config_path)
     final_config = merge(args, config)
     pprint(final_config)
     print("Please check the above information for the configurations", flush=True)

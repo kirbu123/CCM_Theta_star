@@ -89,7 +89,13 @@ if assets_root_path is None:
     sys.exit()
 
 # Loading the simple_room environment
-stage.add_reference_to_stage(assets_root_path + cfg.background_usd_path, cfg.background_stage_path) #!
+if cfg.use_background:
+    if cfg.use_omni_background:
+        stage.add_reference_to_stage(assets_root_path + cfg.background_usd_path, cfg.background_stage_path) #!
+    else:
+        stage.add_reference_to_stage(cfg.background_usd_path, cfg.background_stage_path)
+else:
+    stage.add_reference_to_stage(assets_root_path + "/Isaac/Environments/Grid/default_environment.usd")
 
 # traj=[[-2,-2]]
 # traj=[[3,3], [3, -3], [-3, -3], [-3, 3], [0, 0]]

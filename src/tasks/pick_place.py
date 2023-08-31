@@ -114,7 +114,7 @@ class PickPlace(tasks.PickPlace):
             name="my_ur5",
             end_effector_prim_name="ur5_ee_link",
             gripper=gripper,
-            translation = np.array([0.3312, 0, 0.407]),  
+            translation = np.array(self.cfg.ur5_relative_pose) + np.array(self.cfg.husky_init_pose)  
             # orientation = np.array([1, 0, 0, 0.]),
         )
         self.robots["ur5"] = manipulator
