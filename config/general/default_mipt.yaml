@@ -112,4 +112,5 @@ ur5_stage_path: "/World/ur5"
 end_effector_stage_path: "/World/ur5/robotiq_85_base_link"
 
 connection_joint_stage_path: "/World/connect_joint"
-ur5_relative_pose: [0.3312, 0, 0.407]
+ur5_relative_pose: [0.3312, 0, 0.257]
+
