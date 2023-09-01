@@ -7,7 +7,7 @@ from src.config import Config
 
 
 def setup_imu_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
-    '''Setup the action graph for publishing Husky IMU measurements to ROS2'''
+    '''Setup the action graph for publishing Husky IMU measurements to ROS'''
     keys = og.Controller.Keys
     ros_camera_graph = None
     try:
@@ -21,7 +21,7 @@ def setup_imu_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                 ("OnTick", "omni.graph.action.OnPlaybackTick"),
 
                 ("imuReader", "omni.isaac.sensor.IsaacReadIMU"),
-                ("publishImu", "omni.isaac.ros2_bridge.ROS2PublishImu"),
+                ("publishImu", "omni.isaac.ros_bridge.ROS1PublishImu"),
                 ("readSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
             ],
             keys.CONNECT: [

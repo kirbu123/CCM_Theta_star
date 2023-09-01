@@ -57,7 +57,7 @@ def setup_camera_graph(cfg: Config,
                        stage: Stage,
                        controller: og.Controller,
                        camera_name: str):
-    '''Setup the action graph for publishing Images, Depths and CameraInfo to ROS2'''
+    '''Setup the action graph for publishing Images, Depths and CameraInfo to ROS'''
 
     keys = og.Controller.Keys
     graph = og.get_graph_by_path(cfg.cameras.action_graph_stage_path)
@@ -70,9 +70,9 @@ def setup_camera_graph(cfg: Config,
                 (f"create_{camera_name}Viewport", "omni.isaac.core_nodes.IsaacCreateViewport"),
                 (f"get_{camera_name}RenderProduct", "omni.isaac.core_nodes.IsaacGetViewportRenderProduct"),
                 (f"set_{camera_name}Camera", "omni.isaac.core_nodes.IsaacSetCameraOnRenderProduct"),
-                (f"camera_{camera_name}HelperRgb", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-                (f"camera_{camera_name}HelperInfo", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
-                (f"camera_{camera_name}HelperDepth", "omni.isaac.ros2_bridge.ROS2CameraHelper"),
+                (f"camera_{camera_name}HelperRgb", "omni.isaac.ros_bridge.ROS1CameraHelper"),
+                (f"camera_{camera_name}HelperInfo", "omni.isaac.ros_bridge.ROS1CameraHelper"),
+                (f"camera_{camera_name}HelperDepth", "omni.isaac.ros_bridge.ROS1CameraHelper"),
             ],
             keys.CONNECT: [
                 ("OnTick.outputs:tick", f"create_{camera_name}Viewport.inputs:execIn"),

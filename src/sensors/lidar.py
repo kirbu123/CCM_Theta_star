@@ -7,7 +7,7 @@ from src.config import Config
 
 
 def setup_lidar_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
-    '''Setup the LiDAR action graph for publishing the point cloud to ROS2'''
+    '''Setup the LiDAR action graph for publishing the point cloud to ROS'''
     try:
         og.Controller.edit(
             {"graph_path": cfg.lidar.action_graph_path, "evaluator_name": "execution"},
@@ -16,8 +16,8 @@ def setup_lidar_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                     ("OnTick", "omni.graph.action.OnPlaybackTick"),
 
                     ("createLiRenderProduct", "omni.isaac.core_nodes.IsaacCreateRenderProduct"),
-                    ("lidarHelperMsg", "omni.isaac.ros2_bridge.ROS2RtxLidarHelper"),
-                    ("lidarHelperPointcloud", "omni.isaac.ros2_bridge.ROS2RtxLidarHelper"),
+                    ("lidarHelperMsg", "omni.isaac.ros_bridge.ROS1RtxLidarHelper"),
+                    ("lidarHelperPointcloud", "omni.isaac.ros_bridge.ROS1RtxLidarHelper"),
                 ],
                 og.Controller.Keys.CONNECT: [
                     ("OnTick.outputs:tick", "createLiRenderProduct.inputs:execIn"),
