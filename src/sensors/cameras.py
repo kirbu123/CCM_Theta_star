@@ -90,15 +90,24 @@ def setup_camera_graph(cfg: Config,
             ],
             keys.SET_VALUES: [
                 (f"create_{camera_name}Viewport.inputs:viewportId", cfg.cameras.cameras_list.index(camera_name)),
+
                 (f"camera_{camera_name}HelperRgb.inputs:frameId", f"{camera_name}_sim_camera"),
-                (f"camera_{camera_name}HelperRgb.inputs:topicName", f"{camera_name}_rgb"),
+                (f"camera_{camera_name}HelperRgb.inputs:topicName", f"image_raw"),
                 (f"camera_{camera_name}HelperRgb.inputs:type", "rgb"),
+                (f"camera_{camera_name}HelperRgb.inputs:nodeNamespace",
+                 f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/color"),
+
                 (f"camera_{camera_name}HelperInfo.inputs:frameId", "sim_camera"),
-                (f"camera_{camera_name}HelperInfo.inputs:topicName", f"{camera_name}_camera_info"),
+                (f"camera_{camera_name}HelperInfo.inputs:topicName", f"camera_info"),
                 (f"camera_{camera_name}HelperInfo.inputs:type", "camera_info"),
+                (f"camera_{camera_name}HelperInfo.inputs:nodeNamespace",
+                 f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/color"),
+
                 (f"camera_{camera_name}HelperDepth.inputs:frameId", f"{camera_name}_sim_camera"),
-                (f"camera_{camera_name}HelperDepth.inputs:topicName", f"{camera_name}_depth"),
+                (f"camera_{camera_name}HelperDepth.inputs:topicName", f"image_raw"),
                 (f"camera_{camera_name}HelperDepth.inputs:type", "depth"),
+                (f"camera_{camera_name}HelperDepth.inputs:nodeNamespace",
+                 f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/depth"),
             ],
         },
     )

@@ -33,8 +33,9 @@ def setup_imu_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                 ("readSimTime.outputs:simulationTime", "publishImu.inputs:timeStamp"),
             ],
             keys.SET_VALUES: [
-                ("publishImu.inputs:topicName", "imu"),
-                ("publishImu.inputs:frameId", "sim_imu"),
+                ("publishImu.inputs:topicName", "IMU"),
+                ("publishImu.inputs:nodeNamespace", "/sensor"),
+                ("publishImu.inputs:frameId", "IMU"),
             ],
         },
         )
