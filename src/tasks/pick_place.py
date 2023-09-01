@@ -114,16 +114,18 @@ class PickPlace(tasks.PickPlace):
             name="my_ur5",
             end_effector_prim_name="ur5_ee_link",
             gripper=gripper,
-            translation = np.array(self.cfg.ur5_relative_pose) + np.array(self.cfg.husky_init_pose)  
-            # orientation = np.array([1, 0, 0, 0.]),
+            translation = np.array(self.cfg.ur5_relative_pose) + np.array(self.cfg.husky_init_pose),
+            # orientation = np.array([1, 0, 0, 0.]),[ 0, 0, 0.7071068, 0.7071068 ]
+
         )
         self.robots["ur5"] = manipulator
         joints_default_positions = np.zeros(12)
         # joints_default_positions[0] = 0
-        joints_default_positions[1] = -np.pi / 2
+        # joints_default_positions[1] = -np.pi / 2
         # joints_default_positions[2] = 0
         # joints_default_positions[3] = np.pi / 2
-        joints_default_positions[4] = np.pi / 2
+        # joints_default_positions[4] = np.pi / 2
+        joints_default_positions[:6] = self.cfg.joints_default_positions
         manipulator.set_joints_default_state(positions=joints_default_positions)
 
         return manipulator
