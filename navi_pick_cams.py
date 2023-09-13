@@ -50,7 +50,15 @@ from src.sensors.imu import setup_imu_graph
 cfg = get_config()
 
 # enable ROS bridge extension
-extensions.enable_extension("omni.isaac.ros2_bridge-humble")
+extensions.enable_extension(cfg.ros_cfg[cfg.ros].ros_bridge_extension)
+
+if cfg.ros_cfg[cfg.ros].ros_v == 1:
+    import rosgraph
+    
+    if not rosgraph.is_master_online():
+        carb.log_error("Please run roscore before executing this script")
+        simulation_app.close()
+        exit()
 
 def add_goals(world, scene, goals):
     for i, (x, y) in enumerate(goals):

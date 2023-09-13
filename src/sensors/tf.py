@@ -7,7 +7,12 @@ from src.config import Config
 
 
 def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
-    '''Setup the action graph for publishing Husky and LIDAR tf transforms to ROS2'''
+    '''Setup the action graph for publishing Husky and LIDAR tf transforms to ROS1/2'''
+
+    ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split('-')[0]
+    ros_v = cfg.ros_cfg[cfg.ros].ros_v
+
+
     try:
         og.Controller.edit(
             {"graph_path": cfg.tf.action_graph_path, "evaluator_name": "execution"},
@@ -15,15 +20,15 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                 og.Controller.Keys.CREATE_NODES: [
                     ##* TF Tree
                     ("OnTick", "omni.graph.action.OnTick"),
-                    ("PublishClock", "omni.isaac.ros2_bridge.ROS2PublishClock"),
-                    ("rosContext", "omni.isaac.ros2_bridge.ROS2Context"),
+                    ("PublishClock", f"{ros_bridge}.ROS{ros_v}PublishClock"),
+                    ("rosContext", f"{ros_bridge}.ROS{ros_v}Context"),
                     ("ReadSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
                     # husky
-                    ("tfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
+                    ("tfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
                     # lidar
-                    ("lidarTfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
+                    ("lidarTfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
                     # ur5
-                    ("ur5TfPublisher", "omni.isaac.ros2_bridge.ROS2PublishTransformTree"),
+                    ("ur5TfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
                 ],
                 og.Controller.Keys.CONNECT: [
                     ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
