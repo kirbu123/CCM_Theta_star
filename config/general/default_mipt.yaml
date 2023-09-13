@@ -129,3 +129,4 @@ ur5_relative_pose: [0.3312, 0, 0.257]
 joints_default_positions: [1.595672, -2.871760, 2.799204, -3.072348, -1.581982, -0.000120]
 # joints_default_positions: [1.595672, -2.871760, 2.799204, -3.072348, -1.581982, -0.000120] Original default joints pose
 joints_default_positions: [3.1415927, -2.871760, 2.799204, -3.072348, -1.581982, -0.000120] # Fixed default joints pose
+

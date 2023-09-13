@@ -147,7 +147,6 @@ husky_controller = WheelBasePoseController(name="cool_controller",
 articulation_controller = my_denso.get_articulation_controller()
 
 
-
 ##? set up cameras
 our_stage = get_current_stage()
 # zed_left_camera_prim =  UsdGeom.Camera(our_stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
@@ -178,6 +177,7 @@ setup_imu_graph(cfg, simulation_app, our_stage)
 # Need to initialize physics getting any articulation..etc
 my_world.initialize_physics()
 # input()
+
 
 while simulation_app.is_running():
     my_world.step(render=True)
