@@ -12,47 +12,56 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
     ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split('-')[0]
     ros_v = cfg.ros_cfg[cfg.ros].ros_v
 
+    controller = og.Controller(graph_id ="ros_tf_graph")
 
-    try:
-        og.Controller.edit(
-            {"graph_path": cfg.tf.action_graph_path, "evaluator_name": "execution"},
+    (graph, _, _, _) = controller.edit(
+        {"graph_path": cfg.tf.action_graph_path, "evaluator_name": "execution"},
+        {
+            og.Controller.Keys.CREATE_NODES: [
+                ##* TF Tree
+                ("OnTick", "omni.graph.action.OnTick"),
+                ("PublishClock", f"{ros_bridge}.ROS{ros_v}PublishClock"),
+                ("ReadSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
+                # husky
+                ("tfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
+                # lidar
+                ("lidarTfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
+                # ur5
+                ("ur5TfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
+            ],
+            og.Controller.Keys.CONNECT: [
+                ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
+                ("rosContext.outputs:context", "PublishClock.inputs:context"),
+
+                ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
+                ("OnTick.outputs:tick", "lidarTfPublisher.inputs:execIn"),
+                ("OnTick.outputs:tick", "ur5TfPublisher.inputs:execIn"),
+                    
+                ("ReadSimTime.outputs:simulationTime", "tfPublisher.inputs:timeStamp"),
+                ("ReadSimTime.outputs:simulationTime", "lidarTfPublisher.inputs:timeStamp"),
+                ("ReadSimTime.outputs:simulationTime", "ur5TfPublisher.inputs:timeStamp"),
+
+                ("ReadSimTime.outputs:simulationTime", "PublishClock.inputs:timeStamp"),
+            ],
+            # og.Controller.Keys.SET_VALUES: [],
+        },
+        )
+    
+    if ros_v == 2:
+        controller.edit(
+            graph,
             {
                 og.Controller.Keys.CREATE_NODES: [
-                    ##* TF Tree
-                    ("OnTick", "omni.graph.action.OnTick"),
-                    ("PublishClock", f"{ros_bridge}.ROS{ros_v}PublishClock"),
                     ("rosContext", f"{ros_bridge}.ROS{ros_v}Context"),
-                    ("ReadSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
-                    # husky
-                    ("tfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
-                    # lidar
-                    ("lidarTfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
-                    # ur5
-                    ("ur5TfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
                 ],
                 og.Controller.Keys.CONNECT: [
-                    ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
                     ("rosContext.outputs:context", "PublishClock.inputs:context"),
-
-                    ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
-                    ("OnTick.outputs:tick", "lidarTfPublisher.inputs:execIn"),
-                    ("OnTick.outputs:tick", "ur5TfPublisher.inputs:execIn"),
-
                     ("rosContext.outputs:context", "tfPublisher.inputs:context"),
-                    ("rosContext.outputs:context", "lidarTfPublisher.inputs:context"),
                     ("rosContext.outputs:context", "ur5TfPublisher.inputs:context"),
-                    
-                    ("ReadSimTime.outputs:simulationTime", "tfPublisher.inputs:timeStamp"),
-                    ("ReadSimTime.outputs:simulationTime", "lidarTfPublisher.inputs:timeStamp"),
-                    ("ReadSimTime.outputs:simulationTime", "ur5TfPublisher.inputs:timeStamp"),
-
-                    ("ReadSimTime.outputs:simulationTime", "PublishClock.inputs:timeStamp"),
                 ],
                 # og.Controller.Keys.SET_VALUES: [],
             },
         )
-    except Exception as e:
-        print(e)
 
     ##* TF Tree
     set_targets(
