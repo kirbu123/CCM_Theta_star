@@ -31,7 +31,6 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
             ],
             og.Controller.Keys.CONNECT: [
                 ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
-                ("rosContext.outputs:context", "PublishClock.inputs:context"),
 
                 ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
                 ("OnTick.outputs:tick", "lidarTfPublisher.inputs:execIn"),
