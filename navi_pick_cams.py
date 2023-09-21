@@ -168,7 +168,7 @@ our_stage = get_current_stage()
 # camera_prim.GetFocusDistanceAttr().Set(400)
 
 simulation_app.update()
-setup_cameras(cfg, simulation_app, our_stage, ["zed", "realsense_rear", "realsense_front"])
+setup_cameras(cfg, simulation_app, our_stage) #, ["zed", "realsense_rear", "realsense_front"]
 
 setup_tf_graph(cfg, simulation_app, our_stage)
 setup_lidar_graph(cfg, simulation_app, our_stage)

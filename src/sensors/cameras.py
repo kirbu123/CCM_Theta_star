@@ -19,7 +19,7 @@ def setup_cameras(cfg: Config,
 
     for camera_name in cameras_list:
 
-        zed_left_camera_prim =  UsdGeom.Camera(stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
+        zed_left_camera_prim =  UsdGeom.Camera(stage.GetPrimAtPath(cfg.cameras[camera_name].stage_path))
         # zed_left_camera_prim = stage.GetPrimAtPath('/World/Husky_Robot/fence_link/zed/husky_front_right')
         zed_left_camera_prim.GetHorizontalApertureAttr().Set(cfg.cameras[camera_name].horizontal_aperture)
         zed_left_camera_prim.GetVerticalApertureAttr().Set(cfg.cameras[camera_name].vertical_aperture)
@@ -95,23 +95,23 @@ def setup_camera_graph(cfg: Config,
             keys.SET_VALUES: [
                 (f"create_{camera_name}Viewport.inputs:viewportId", cfg.cameras.cameras_list.index(camera_name)),
 
-                (f"camera_{camera_name}HelperRgb.inputs:frameId", f"{camera_name}_sim_camera"),
-                (f"camera_{camera_name}HelperRgb.inputs:topicName", f"image_raw"),
+                (f"camera_{camera_name}HelperRgb.inputs:frameId", f"{camera_name}"),
+                (f"camera_{camera_name}HelperRgb.inputs:topicName", f"{camera_name}_color_image_raw"),
                 (f"camera_{camera_name}HelperRgb.inputs:type", "rgb"),
-                (f"camera_{camera_name}HelperRgb.inputs:nodeNamespace",
-                 f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/color"),
+                # (f"camera_{camera_name}HelperRgb.inputs:nodeNamespace",
+                #  f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/color"),
 
-                (f"camera_{camera_name}HelperInfo.inputs:frameId", "sim_camera"),
-                (f"camera_{camera_name}HelperInfo.inputs:topicName", f"camera_info"),
+                (f"camera_{camera_name}HelperInfo.inputs:frameId", f"{camera_name}"),
+                (f"camera_{camera_name}HelperInfo.inputs:topicName", f"{camera_name}_color_camera_info"),
                 (f"camera_{camera_name}HelperInfo.inputs:type", "camera_info"),
-                (f"camera_{camera_name}HelperInfo.inputs:nodeNamespace",
-                 f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/color"),
+                # (f"camera_{camera_name}HelperInfo.inputs:nodeNamespace",
+                #  f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/color"),
 
-                (f"camera_{camera_name}HelperDepth.inputs:frameId", f"{camera_name}_sim_camera"),
-                (f"camera_{camera_name}HelperDepth.inputs:topicName", f"image_raw"),
+                (f"camera_{camera_name}HelperDepth.inputs:frameId", f"{camera_name}"),
+                (f"camera_{camera_name}HelperDepth.inputs:topicName", f"{camera_name}_depth_image_raw"),
                 (f"camera_{camera_name}HelperDepth.inputs:type", "depth"),
-                (f"camera_{camera_name}HelperDepth.inputs:nodeNamespace",
-                 f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/depth"),
+                # (f"camera_{camera_name}HelperDepth.inputs:nodeNamespace",
+                #  f"/sensor/camera/cam_{cfg.cameras.cameras_list.index(camera_name)}/depth"),
             ],
         },
     )

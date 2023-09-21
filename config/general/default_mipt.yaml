@@ -35,23 +35,23 @@ tf:
   action_graph_path: "/World/Husky_Robot/TF"
 
 cameras:
-  cameras_list: ["zed", "realsense_rear", "realsense_front"] # default list for setup ros publishers
+  cameras_list: ["husky_front_left", "husky_rear_left", "ur_front_left"] # default list for setup ros publishers
   action_graph_stage_path: "/World/Husky_Robot/ROS_Cameras"
 
-  zed:
+  husky_front_left:
     stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
     horizontal_aperture: 5.12
     vertical_aperture: 2.88
     projection_type: "perspective"
     focal_length: 2.733857912
-  realsense_rear:
+  husky_rear_left:
     stage_path: "/World/Husky_Robot/fence_link/realsense/husky_rear_left"
     horizontal_aperture: 3.84
     vertical_aperture: 2.16
     projection_type: "perspective"
     focal_length: 2.731496598
-  realsense_front:
-    stage_path: "/World/ur5/ur5_ee_link/realsense/husky_front_left"
+  ur_front_left:
+    stage_path: "/World/ur5/ur5_ee_link/realsense/ur_front_left"
     horizontal_aperture: 3.84
     vertical_aperture: 2.16
     projection_type: "perspective"

@@ -6,6 +6,52 @@ from omni.isaac.core.utils.prims import set_targets
 from src.config import Config
 
 
+def setup_camera_tf_graph(cfg: Config,
+                       simulation_app: SimulationApp,
+                       stage: Stage,
+                       controller: og.Controller,
+                       camera_name: str):
+    '''Setup the action graph for publishing Images, Depths and CameraInfo to ROS1/2'''
+
+    keys = og.Controller.Keys
+    graph = og.get_graph_by_path(cfg.tf.action_graph_path)
+
+    ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split('-')[0]
+    ros_v = cfg.ros_cfg[cfg.ros].ros_v
+
+    # controller = og.Controller(graph_id=cfg.cameras.action_graph_id)
+    controller.edit(
+        graph,
+        {
+            keys.CREATE_NODES: [
+                # ("OnTick", "omni.graph.action.OnPlaybackTick"),
+                (f"{camera_name}_TfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
+            ],
+            keys.CONNECT: [
+                ("ReadSimTime.outputs:simulationTime", f"{camera_name}_TfPublisher.inputs:timeStamp"),
+                ("OnTick.outputs:tick", f"{camera_name}_TfPublisher.inputs:execIn"),
+
+            ],
+        },
+    )
+
+    ##* ##########################
+
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + f"/{camera_name}_TfPublisher"),
+        attribute="inputs:parentPrim",
+        target_prim_paths=[f"{cfg.husky_stage_path}/fence_link"],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + f"/{camera_name}_TfPublisher"),
+        attribute="inputs:targetPrims",
+        target_prim_paths=[cfg.cameras[camera_name].stage_path],
+    )
+    simulation_app.update()
+    
+    controller.evaluate_sync(graph)
+
+
 def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
     '''Setup the action graph for publishing Husky and LIDAR tf transforms to ROS1/2'''
 
@@ -90,3 +136,6 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
     )
 
     simulation_app.update()
+
+    for camera_name in cfg.cameras.cameras_list:
+        setup_camera_tf_graph(cfg, simulation_app, stage, controller, camera_name)

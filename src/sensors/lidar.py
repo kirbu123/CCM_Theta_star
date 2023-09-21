@@ -34,7 +34,7 @@ def setup_lidar_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                     ##? LiDAR
                     ("lidarHelperPointcloud.inputs:topicName", "lidar"),
                     ("lidarHelperPointcloud.inputs:frameId", "rtx_lidar"),
-                    ("lidarHelperPointcloud.inputs:nodeNamespace", "/sensor"),
+                    # ("lidarHelperPointcloud.inputs:nodeNamespace", "/sensor"),
                     ("lidarHelperPointcloud.inputs:type", "point_cloud"),
                 ],
             },

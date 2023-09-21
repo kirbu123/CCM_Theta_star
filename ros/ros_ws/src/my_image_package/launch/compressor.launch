@@ -1,0 +1,9 @@
+<launch>
+    <node name="image_compress_node" pkg="my_image_package" type="image_compress_node" output="screen">
+        <!-- If you have any ROS params, you can add them here -->
+    </node>
+
+    <node name="depth_compress_node" pkg="my_image_package" type="depth_compress_node" output="screen">
+        <!-- If you have any ROS params, you can add them here -->
+    </node>
+</launch>
