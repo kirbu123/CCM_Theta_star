@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
@@ -34,6 +35,12 @@ from omni.isaac.core.utils.stage import get_stage_units
 from omni.isaac.core.utils.render_product import create_hydra_texture
 import omni.replicator.core as rep
 from pxr import UsdPhysics, Usd, Sdf, Gf, UsdGeom
+
+##!
+# import rospy
+# import actionlib
+# from my_action_package.msg import SquareNumberAction, SquareNumberFeedback, SquareNumberResult
+##!
 
 from src.tasks.pick_place import PickPlace
 from src.tasks.navigation import Navigate
@@ -178,6 +185,47 @@ setup_imu_graph(cfg, simulation_app, our_stage)
 my_world.initialize_physics()
 # input()
 
+#!######
+#!######
+#!######
+# import asyncio
+
+# try:
+#     rospy.init_node("async_action_server", anonymous=True, disable_signals=True, log_level=rospy.ERROR)
+# except rospy.exceptions.ROSException as e:
+#     print("Node has already been initialized, do nothing")
+
+# class SquareNumberServer:
+#     def __init__(self):
+#         self.server = actionlib.SimpleActionServer('square_number', SquareNumberAction, self.execute, False)
+#         self.server.start()
+
+#     def execute(self, goal):
+#         feedback = SquareNumberFeedback()
+#         result = SquareNumberResult()
+#         r = rospy.Rate(1)
+#         for i in range(goal.number_to_square + 1):
+#             if self.server.is_preempt_requested():
+#                 rospy.loginfo('The goal has been preempted')
+#                 self.server.set_preempted()
+#                 return
+
+#             feedback.current_step = i
+#             self.server.publish_feedback(feedback)
+#             r.sleep()
+
+#         result.squared_number = goal.number_to_square * goal.number_to_square
+#         rospy.loginfo('Sending result %d', result.squared_number)
+#         self.server.set_succeeded(result)
+
+# async def run_action_Server():
+#     server = SquareNumberServer()
+#     rospy.spin()
+
+# asyncio.ensure_future(run_action_Server())  # Create an asyncio task for the main coroutine
+
+
+#!#######!#######!######
 
 while simulation_app.is_running():
     my_world.step(render=True)

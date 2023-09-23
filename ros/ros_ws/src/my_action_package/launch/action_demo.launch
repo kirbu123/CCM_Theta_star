@@ -1,0 +1,4 @@
+<launch>
+    <node name="square_number_server" pkg="my_action_package" type="square_number_server.py" output="screen" />
+    <node name="square_number_client" pkg="my_action_package" type="square_number_client.py" output="screen" />
+</launch>
