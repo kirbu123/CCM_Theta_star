@@ -32,13 +32,14 @@ class PickPlace(tasks.PickPlace):
         tasks.PickPlace.__init__(
             self,
             name=name,
-            cube_initial_position=cfg.target_position,
-            cube_initial_orientation=cfg.target_orientation,
-            target_position=cfg.husky_target_pose,
-            cube_size=np.array(cfg.target_cube_size),
-            offset=cfg.target_cube_offset,
+            cube_initial_position=cfg.pick_position,
+            cube_initial_orientation=cfg.pick_orientation,
+            target_position=cfg.place_pose,
+            cube_size=np.array(cfg.cube_size),
+            offset=cfg.cube_offset,
         )
         self.robots = {}
+        self.obj = {}
         self.cfg = cfg
         self.husky_asset_path = cfg.husky_usd_path
         return
@@ -50,6 +51,12 @@ class PickPlace(tasks.PickPlace):
             scene (Scene): [description]
         """
         super().set_up_scene(scene)
+        
+        # self._cube.set_collision_enabled(False)
+
+        self.obj["cube"]=self._cube
+
+
         print("\n Now we are in new set_up_scene!!! \n")
 
         husky_asset_path = self.husky_asset_path #"/home/vitaly/.local/share/ov/pkg/isaac_sim-2022.2.1/exts/omni.isaac.examples/omni/isaac/examples/ur5_gripper_husky_obj/asset/husky.usd"
@@ -84,6 +91,10 @@ class PickPlace(tasks.PickPlace):
         fixed_joint.GetBody1Rel().SetTargets([f"{self.cfg.ur5_stage_path}/ur5_base_link"])
         fixed_joint.GetExcludeFromArticulationAttr().Set(True)
         #########################################################################	
+        
+        prim_trans_point = stage.GetPrimAtPath(f"{self.cfg.ur5_stage_path}/ur5_base_link/trans_point")
+        self.robots["trans_point"] = prim_trans_point
+
         return
 
     def set_robot(self) -> SingleManipulator:
@@ -104,8 +115,8 @@ class PickPlace(tasks.PickPlace):
         gripper = ParallelGripper( 
             end_effector_prim_path=self.cfg.end_effector_stage_path,
             joint_prim_names=["finger_joint", "right_outer_knuckle_joint"],
-            joint_opened_positions=np.array([0, 0]),
-            joint_closed_positions=np.array([0.4, -0.4]),
+            joint_opened_positions=np.array([0., 0.]),
+            joint_closed_positions=np.array([0.5, -0.5]),
             # action_deltas=np.array([-0.05, 0.05]),
         )
         
@@ -130,22 +141,6 @@ class PickPlace(tasks.PickPlace):
 
         return manipulator
 
-    # def get_observations(self) -> dict:
-    #     """[summary]
-
-    #     Returns:
-    #         dict: [description]
-    #     """
-    #     # print("\n Now listen to me ! \n")
-    #     joints_state = self._robot.get_joints_state()
-    #     target_position, target_orientation = self._target.get_local_pose()
-    #     return {
-    #         self._robot.name: {
-    #             "joint_positions": np.array(joints_state.positions),
-    #             "joint_velocities": np.array(joints_state.velocities),
-    #         },
-    #         self._target.name: {"position": np.array(target_position), "orientation": np.array(target_orientation)},
-    #     }
     def get_observations(self) -> dict:
         """[summary]
 
@@ -153,8 +148,10 @@ class PickPlace(tasks.PickPlace):
             dict: [description]
         """
         joints_state = self._robot.get_joints_state()
+        husky_position, husky_orientation = self._robot.get_local_pose()
         cube_position, cube_orientation = self._cube.get_local_pose()
-        end_effector_position, _ = self._robot.end_effector.get_local_pose()
+        end_effector_position, _ = self._robot.end_effector.get_world_pose()
+        ur5_position, ur5_orientation = self.robots["ur5"].get_local_pose()
         return {
             self._cube.name: {
                 "position": cube_position,
@@ -164,5 +161,9 @@ class PickPlace(tasks.PickPlace):
             self._robot.name: {
                 "joint_positions": joints_state.positions,
                 "end_effector_position": end_effector_position,
+                "husky_position": husky_position,
+                "husky_orientation": husky_orientation,
+                "ur5_position": ur5_position,
+                "ur5_orientation": ur5_orientation,
             },
         }

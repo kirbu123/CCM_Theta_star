@@ -40,6 +40,12 @@ class RMPFlowController(mg.MotionPolicyController):
 
     def reset(self):
         mg.MotionPolicyController.reset(self)
+        # mg.MotionPolicyController.remove_obstacle(self, obstacle)
+        self._default_position, self._default_orientation = (
+            self._articulation_motion_policy._robot_articulation.get_world_pose()
+        )
         self._motion_policy.set_robot_base_pose(
             robot_position=self._default_position, robot_orientation=self._default_orientation
         )
+        print("RMPFlow reset success!\n")
+        # print(f"After reset, position is:{self._default_position}\n")

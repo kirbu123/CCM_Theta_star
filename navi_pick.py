@@ -27,6 +27,9 @@ from omni.isaac.core.articulations import ArticulationSubset
 from omni.isaac.core.utils.stage import get_current_stage
 from omni.isaac.core.utils.stage import get_stage_units
 from pxr import UsdPhysics, Usd, Sdf
+from omni.isaac.core.utils.stage import add_reference_to_stage
+from omni.isaac.core.prims import RigidPrimView,XFormPrim
+from omni.isaac.core.utils.rotations import euler_angles_to_quat
 
 from src.tasks.follow_target import FollowTarget
 from src.tasks.pick_place import PickPlace
@@ -68,22 +71,37 @@ def add_goals(world, scene, goals):
 ###################################### Init Scene #############################################
 my_world = World(stage_units_in_meters=1.0)
 
-# traj=[[2,2]]
-# traj=[[3,3], [3, -3], [-3, -3], [-3, 3], [0, 0]]
+# add table
+# mipt_env_path = cfg.table_usd_path
+# add_reference_to_stage(usd_path=mipt_env_path, prim_path="/World/table")
+# stage = get_current_stage()
+# position = np.array(cfg.table_position)
+# orientation = np.array(cfg.table_orientation)
+# mipt_table = XFormPrim(prim_path = "/World/table", position=position, orientation=orientation)
 
-navigation_end = np.array([1.4883547, 1.3499106, 0])
-target_position = np.array([-0.3, 0.6, 0])
-target_position[2] = 0.0515 / 2.0
+# add trash can
+container_path = cfg.can_usd_path
+add_reference_to_stage(usd_path=container_path, prim_path="/World/container")
+stage = get_current_stage()
+position = np.array(cfg.can_position)
+orientation = np.array(cfg.can_orientation)
+trash_can = XFormPrim(prim_path = "/World/container", position=position, orientation=orientation)
 
-# traj_completed = False
+
+
 navigation_finish = False
 
-# Relative coordinates
-cube_size = np.array([0.0515, 0.0515, 0.0515]) / get_stage_units()
-relative_cube_init_position = np.array([0.3, 0.3, 0.3]) / get_stage_units()
-relative_cube_init_orientation = np.array([1, 0, 0, 0])
-relative_target_position = np.array([-0.3, -0.3, 0]) / get_stage_units()
-relative_target_position[2] = cube_size[2] / 2.0
+navigation_one_start = True
+navigation_one_finish = False
+pick_up_start = False
+pick_up_finish = False
+navigation_two_start = False
+navigation_two_finish = False
+place_start = False
+place_finish = False
+
+init_pick_controller = False
+
 
 pick_task = PickPlace(name="denso_pick_place",
                       cfg=cfg,
@@ -94,14 +112,16 @@ my_world.reset()
 my_denso = my_world.scene.get_object("my_ur5")
 
 my_world.reset()
-husky=pick_task.robots["husky"]
+husky = pick_task.robots["husky"]
+ur5 = pick_task.robots["ur5"]
+cube = pick_task.obj["cube"]
 
 scene={}
 
-add_goals(my_world, scene, cfg.trajectory)
+# add_goals(my_world, scene, cfg.trajectory)  # u can add a red cube as the target position of navigation
 my_world.reset()
 
-
+prim_trans_point = pick_task.robots["trans_point"]
 
 ####################################### Init Husky controller ################################
 husky_controller = WheelBasePoseController(name="cool_controller",
@@ -110,86 +130,186 @@ husky_controller = WheelBasePoseController(name="cool_controller",
                                                     wheel_radius=cfg.wheel_radius,
                                                     wheel_base=cfg.wheel_base),
                                                     is_holonomic=False,)
-articulation_controller = my_denso.get_articulation_controller()
-
 
 
 while simulation_app.is_running():
     my_world.step(render=True)
     if my_world.is_playing():
-        if not navigation_finish:
-            for i, milestone in enumerate(cfg.trajectory):
-                milestone = np.asarray(milestone)
-                print(f"\nCurr goal: {milestone}")
+        
+        ###########################################   Navi One   #######################################################
+        if navigation_one_start and (not navigation_one_finish) and (not pick_up_start) and (not pick_up_finish) and (not place_start) and (not place_finish):
+            print("Step navi one!\n")
+            ####################################### Init UR5 controller ################################
+            if not init_pick_controller:                
+                pick_place_controller = PickPlaceController(name="controller",
+                                            robot_articulation=my_denso, 
+                                            gripper=my_denso.gripper,
+                                            cfg=cfg,
+                                            )
+                task_params = my_world.get_task("denso_pick_place").get_params()
+                articulation_controller = my_denso.get_articulation_controller()
+                init_pick_controller = True
+
+            for i, milestone in enumerate(cfg.husky_pick_position):
+
+                husky_pick_position = np.asarray(milestone)
+                print(f"\nCurr goal: {husky_pick_position}")
                 distance = 100
-                # while not np.allclose(husky.get_world_pose()[0][:2], milestone, atol=0.1):
-                while not (distance < 0.7):
+
+                while not (distance < 1.2):
                     # print(f"World pose: {husky.get_world_pose()[0][:2]}\n")
-                    print(f"Distance: {distance}\n")
+                    print(f"Distance of Navi1: {distance}\n")
                     position, orientation = husky.get_world_pose()
-                    # print(f"Curr step: {position}")
-                    # print(f"Curr position: {position}")
-                    # print(f"Curr orientation: {orientation}")
-                    # print(f"Curr goal: {milestone}")
+
                     wheel_actions=husky_controller.forward(start_position=position,
                                                                         start_orientation=orientation,
-                                                                        goal_position=milestone,
+                                                                        goal_position=husky_pick_position,
                                                                         lateral_velocity=cfg.lateral_velocity,
                                                                         position_tol = cfg.position_tol,)
-                    # print(f"Wheel actions: {wheel_actions}")
+
                     wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
-                    print(f"Modified wheel actions: {wheel_actions}\n")
-                    # print(f"Wheel number: {husky._num_wheel_dof} - Actions length: {wheel_actions.get_length()}")
+
+                    husky.apply_wheel_actions(wheel_actions)
+                    my_world.step(render=True)
+                    distance = np.sum((husky.get_world_pose()[0][:2] - husky_pick_position)**2)  # Compute distance between husky and target
+
+            navi_one_end_position, navi_one_end_orientation = husky.get_world_pose()
+
+            navigation_one_start = False
+            navigation_one_finish = True 
+            pick_up_start = True
+
+
+            pick_place_controller._cspace_controller.reset(cube) # Very Important! Here init the RMPFlow's pose after husky move!!!!
+            
+            
+
+        ###########################################   To pick up   #######################################################
+        
+        if (navigation_one_finish) and (pick_up_start) and (not pick_up_finish) and (not place_start) and (not place_finish):
+            
+            
+            
+            # print("Step pick up!\n")
+            wheel_actions=husky_controller.forward(start_position=navi_one_end_position,
+                                                        # start_orientation=navi_one_end_orientation,
+                                                        start_orientation=np.array([0,0,0,1]),
+                                                        goal_position=navi_one_end_position,
+                                                        lateral_velocity=0.5,
+                                                        position_tol = 0.1,)   
+            wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
+            # print(f"Modified wheel actions: {wheel_actions}\n")
+            husky.apply_wheel_actions(wheel_actions)
+
+            observations = my_world.get_observations()
+            # forward the observation values to the controller to get the actions
+            actions = pick_place_controller.forward(
+                picking_position=cube.get_world_pose()[0],
+                placing_position=observations[task_params["cube_name"]["value"]]["target_position"],  ## the placing position is not matter here, because only pick
+                current_joint_positions=observations[task_params["robot_name"]["value"]]["joint_positions"],
+                # end_effector_offset=np.array([0, 0, 0.25]),
+                end_effector_offset=np.array(cfg.end_effector_offset),
+                end_effector_orientation = euler_angles_to_quat(np.array([0, np.pi, 0.5*np.pi])),
+                prim_trans_point = prim_trans_point,
+            )
+            ee_pose = observations[task_params["robot_name"]["value"]]["end_effector_position"]
+
+            articulation_controller.apply_action(actions)
+
+            num_event = pick_place_controller._event
+            print(f"Now event: {num_event}\n")
+
+            if pick_place_controller.pick_done():
+                pick_up_start = False
+                pick_up_finish = True
+                navigation_two_start = True
+                pick_place_controller.pause()
+                print("pick done!")
+                
+            
+        ###################################   To next position for placing(Navi Two)    #####################################
+
+        if (navigation_one_finish) and (pick_up_finish) and (navigation_two_start) and (not navigation_two_finish) and (not place_start):    
+            print("Step navi 2!\n")
+
+            for i, milestone in enumerate(cfg.husky_place_position):
+
+                distance = 100
+                husky_place_position = np.asarray(milestone)
+                # while not np.allclose(husky.get_world_pose()[0][:2], milestone, atol=0.1):
+                while not (distance < 1.2):
+                    print(f"Distance of Navi2: {distance}\n")
+                    # print(f"Curr position: {position}\n")
+                    # print(f"Curr orientation: {orientation}\n")
+                    position, orientation = husky.get_world_pose()
+                    wheel_actions=husky_controller.forward(start_position=position,
+                                                                        start_orientation=orientation,
+                                                                        # start_orientation=np.array([1, 0, 0, 0]),
+                                                                        goal_position=husky_place_position,
+                                                                        lateral_velocity=0.5,
+                                                                        position_tol = 0.1,)
+
+                    wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
+
                     husky.apply_wheel_actions(wheel_actions)
                     my_world.step(render=True)
                     distance = np.sum((husky.get_world_pose()[0][:2] - milestone)**2)  # Compute distance between husky and target
 
-            end_position, end_orientation = husky.get_world_pose()
-            print("\n Navigation finish!\n Now Start grasp!! \n")
-            navigation_finish = True 
-            pick_up_start = False
+            navi_two_end_position, navi_two_end_orientation = husky.get_world_pose()
 
-        #! Very strange code part, is it really needed ?
-        wheel_actions=husky_controller.forward(start_position=end_position,
-                                                    start_orientation=end_orientation,
-                                                    goal_position=end_position,
-                                                    lateral_velocity=cfg.lateral_velocity,
-                                                    position_tol = cfg.position_tol,)   
-        wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
-        # print(f"Modified wheel actions: {wheel_actions}\n")
-        husky.apply_wheel_actions(wheel_actions)
-        if not pick_up_start:
-            print(f"Now the coordinates of Husky is : {husky.get_world_pose()[0][:2]}\n")
-        #! ##########
+            navigation_two_start = False
+            navigation_two_finish = True
+            place_start = True
+            place_finish = False
+
+            pick_place_controller._cspace_controller.reset(cube) # Very Important! Here init the RMPFlow's pose after husky move!!!!
         
-        ############################################################################################################
-        
-        if not pick_up_start:
-            print(f"Now let's pick up ! \n")
-            pick_controller = PickPlaceController(name="controller",
-                                        robot_articulation=my_denso, 
-                                        gripper=my_denso.gripper,
-                                        cfg=cfg,
-                                        )
-            task_params = my_world.get_task("denso_pick_place").get_params()
-            articulation_controller = my_denso.get_articulation_controller()
-            pick_up_start = True
-        
-        observations = my_world.get_observations()
-        # forward the observation values to the controller to get the actions
-        actions = pick_controller.forward(
-            picking_position=observations[task_params["cube_name"]["value"]]["position"],
-            placing_position=observations[task_params["cube_name"]["value"]]["target_position"],
-            current_joint_positions=observations[task_params["robot_name"]["value"]]["joint_positions"],
-            # end_effector_offset=np.array([0, 0, 0.25]),
-            end_effector_offset=np.array(cfg.end_effector_offset),
-        )
-        ee_pose = observations[task_params["robot_name"]["value"]]["end_effector_position"]
-        if pick_up_start:
-            print(f"Now the ee coordinate is: {ee_pose}")
-        if pick_controller.is_done():
-            print("done picking and placing")
-        articulation_controller.apply_action(actions)
+        ###################################   To Place    #########################################################
+
+        if (navigation_one_finish) and (pick_up_finish) and (navigation_two_finish) and (place_start) and (not place_finish):
+
+            wheel_actions=husky_controller.forward(start_position=navi_two_end_position,
+                                                        # start_orientation=navi_two_end_orientation,
+                                                        start_orientation=np.array([0,0,0,1]),
+                                                        goal_position=navi_two_end_position,
+                                                        lateral_velocity=0.5,
+                                                        position_tol = 0.1,)   
+            wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
+            husky.apply_wheel_actions(wheel_actions)
+
+            pick_place_controller.resume()
+
+            num_event = pick_place_controller._event
+            # print(f"Now event: {num_event}\n")
+
+            observations = my_world.get_observations()
+            # forward the observation values to the controller to get the actions
+            actions = pick_place_controller.forward(
+                # picking_position=observations[task_params["cube_name"]["value"]]["position"],   ## the picking position is not matter here, because only pick       
+                picking_position=cube.get_world_pose()[0],
+                # picking_position=observations[task_params["cube_name"]["value"]]["target_position"],
+
+                placing_position=observations[task_params["cube_name"]["value"]]["target_position"],
+
+                current_joint_positions=observations[task_params["robot_name"]["value"]]["joint_positions"],
+                # end_effector_offset=np.array([0, 0, 0.25]),
+                end_effector_offset=np.array(cfg.end_effector_offset),
+                end_effector_orientation = euler_angles_to_quat(np.array([0, np.pi, 0.8*np.pi])),
+                prim_trans_point = prim_trans_point,
+                ee_pose = observations[task_params["robot_name"]["value"]]["end_effector_position"],
+            )
+
+            # picking_position=observations[task_params["cube_name"]["value"]]["target_position"]
+            # print(f"picking_position: {picking_position}\n")
+
+
+            articulation_controller.apply_action(actions)
+            ee_pose = observations[task_params["robot_name"]["value"]]["end_effector_position"]
+            print(f"ee world pose: {ee_pose}")
+            
+            ## place_start = False
+            ## place_finish = True
+
 
 
 
