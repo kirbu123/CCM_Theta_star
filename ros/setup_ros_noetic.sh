@@ -1,19 +1,4 @@
 #!/bin/bash
-
-if [ $# -ne 1 ]; then
-    echo "Usage: ./setup_ros_noetic.sh <path_to_isaac_ros_ws_dir>"
-    exit 1
-fi
-
-if [ ! -d "$1" ]; then
-    echo "Error: $1 is not a valid directory"
-    exit 1
-fi
-
-ROS_WS=$(realpath $1)
-
-echo "ROS_WS is $ROS_WS"
-
 # Grant access to the X server
 xhost +local:root
 
@@ -25,8 +10,6 @@ docker run -d \
     --name $CONTAINER_NAME \
     -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /mnt/data/isaac_ros:/data:rw \
-    -v $ROS_WS:/root/ros_ws:rw \
     -p 11311:11311 \
     --net=host \
     osrf/ros:noetic-desktop-full \

@@ -9,7 +9,7 @@ from pprint import pprint, pformat
 import yaml
 
 # _config_path = "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/general/default.yaml"
-_config_dir = "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/general"
+_config_dir = "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky-2/config/general"
 _config_name = "default"
 
 class Config:

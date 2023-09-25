@@ -57,15 +57,7 @@ from src.sensors.imu import setup_imu_graph
 cfg = get_config()
 
 # enable ROS bridge extension
-extensions.enable_extension(cfg.ros_cfg[cfg.ros].ros_bridge_extension)
-
-if cfg.ros_cfg[cfg.ros].ros_v == 1:
-    import rosgraph
-    
-    if not rosgraph.is_master_online():
-        carb.log_error("Please run roscore before executing this script")
-        simulation_app.close()
-        exit()
+extensions.enable_extension("omni.isaac.ros2_bridge-humble")
 
 def add_goals(world, scene, goals):
     for i, (x, y) in enumerate(goals):
@@ -110,7 +102,7 @@ if cfg.use_background:
     else:
         stage.add_reference_to_stage(cfg.background_usd_path, cfg.background_stage_path)
 else:
-    stage.add_reference_to_stage(assets_root_path + "/Isaac/Environments/Grid/default_environment.usd")
+    stage.add_reference_to_stage(assets_root_path + "/Isaac/Environments/Grid/default_environment.usd", cfg.background_stage_path)
 
 # traj=[[-2,-2]]
 # traj=[[3,3], [3, -3], [-3, -3], [-3, 3], [0, 0]]
@@ -154,6 +146,7 @@ husky_controller = WheelBasePoseController(name="cool_controller",
 articulation_controller = my_denso.get_articulation_controller()
 
 
+
 ##? set up cameras
 our_stage = get_current_stage()
 # zed_left_camera_prim =  UsdGeom.Camera(our_stage.GetPrimAtPath(cfg.cameras.zed.stage_path))
@@ -184,48 +177,6 @@ setup_imu_graph(cfg, simulation_app, our_stage)
 # Need to initialize physics getting any articulation..etc
 my_world.initialize_physics()
 # input()
-
-#!######
-#!######
-#!######
-# import asyncio
-
-# try:
-#     rospy.init_node("async_action_server", anonymous=True, disable_signals=True, log_level=rospy.ERROR)
-# except rospy.exceptions.ROSException as e:
-#     print("Node has already been initialized, do nothing")
-
-# class SquareNumberServer:
-#     def __init__(self):
-#         self.server = actionlib.SimpleActionServer('square_number', SquareNumberAction, self.execute, False)
-#         self.server.start()
-
-#     def execute(self, goal):
-#         feedback = SquareNumberFeedback()
-#         result = SquareNumberResult()
-#         r = rospy.Rate(1)
-#         for i in range(goal.number_to_square + 1):
-#             if self.server.is_preempt_requested():
-#                 rospy.loginfo('The goal has been preempted')
-#                 self.server.set_preempted()
-#                 return
-
-#             feedback.current_step = i
-#             self.server.publish_feedback(feedback)
-#             r.sleep()
-
-#         result.squared_number = goal.number_to_square * goal.number_to_square
-#         rospy.loginfo('Sending result %d', result.squared_number)
-#         self.server.set_succeeded(result)
-
-# async def run_action_Server():
-#     server = SquareNumberServer()
-#     rospy.spin()
-
-# asyncio.ensure_future(run_action_Server())  # Create an asyncio task for the main coroutine
-
-
-#!#######!#######!######
 
 while simulation_app.is_running():
     my_world.step(render=True)

@@ -6,19 +6,6 @@
 # general
 logging_level: 'INFO' # 10 #
 
-ros: "humble" # ["noetic", "foxy", "humble"]
-
-ros_cfg:
-  noetic:
-    ros_v: 1 # ROS version
-    ros_bridge_extension: "omni.isaac.ros_bridge"
-  foxy:
-    ros_v: 2 # ROS version
-    ros_bridge_extension: "omni.isaac.ros2_bridge"
-  humble:
-    ros_v: 2 # ROS version
-    ros_bridge_extension: "omni.isaac.ros2_bridge-humble"
-
 
 ---
 # Background info

@@ -288,26 +288,6 @@ rviz2 -d config/ros2/mipt_env_rviz2_cfg.rviz
 
 Работа с ROS и ROS2 существенно отличается в плане настройки рабочего окружения и незначительно отличается при работе с.
 
-Используемая версия ROS может быть задана в конфиге:
-
-```yaml
-ros: "humble" # ["noetic", "foxy", "humble"]
-```
-
-или через аргумент командной строки:
-
-```bash
-./python.sh extension_examples/virtual-husky/navi_pick_cams.py --config_name default_mipt --ros humble ...
-
-./python.sh extension_examples/virtual-husky/navi_pick_cams.py --config_name default_mipt --ros foxy ...
-
-./python.sh extension_examples/virtual-husky/navi_pick_cams.py --config_name default_mipt --ros noetic ...
-``` 
- 
-**по умолчанию используется ROS2 Humble**.
-
-*Note:* На данный момент из всех версий ROS1 в конфиге можно указать только noetic, но при желании это легко исправить (см файл конфигурации).
-
 ### Работа с ROS
 
 To be filled, пока можно смотреть [документацию](https://docs.omniverse.nvidia.com/isaacsim/latest/install_ros.html#isaac-sim-app-install-ros).
