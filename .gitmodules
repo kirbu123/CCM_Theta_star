@@ -1,0 +1,3 @@
+[submodule "ros/ros_ws/src/communication_msgs"]
+	path = ros/ros_ws/src/communication_msgs
+	url = git@git.sberrobots.ru:mipt.navigation/interaction/communication_msgs.git
