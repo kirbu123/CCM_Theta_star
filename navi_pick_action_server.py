@@ -54,7 +54,15 @@ import rospy
 import actionlib
 import threading
 import queue
+
+from src.action_servers.servers import MoveToActionServer, PickupObjectActionServer, PutObjectActionServer, OpenSeedActionServer
+
 from my_action_package.msg import SquareNumberAction, SquareNumberFeedback, SquareNumberResult
+from communication_msgs.msg import TaskArray
+from communication_msgs.msg import PickupObjectAction, PickupObjectResult
+from communication_msgs.msg import PutObjectAction, PutObjectResult
+from communication_msgs.msg import MoveToAction, MoveToResult, MoveToFeedback
+from communication_msgs.msg import OpenSeeDSetterAction, OpenSeeDSetterGoal
 #!#######!#######!######
 
 cfg = get_config()
@@ -177,48 +185,74 @@ my_world.initialize_physics()
 
 
 task_queue = queue.Queue()
-action_servers = []
+action_servers = {}
 
 def server_thread():
     rospy.spin()  # This will block and process ROS callbacks
 
-class SquareNumberServer:
-    def __init__(self, task_queue: queue, id: int):
-        self.server = actionlib.SimpleActionServer(f'square_number_{id}', SquareNumberAction, self.execute, False)
+class HuskyActionServer:
+    def __init__(self, 
+                 cfg: Config,
+                 server_name: str,
+                 task_queue: queue,
+                ):
+        self.action = cfg.action_servers[server_name].action
+        self.result = cfg.action_servers[server_name].result
+        self.feedback = cfg.action_servers[server_name].feedback
+        self.server_name = server_name
+
+        self.server = actionlib.SimpleActionServer(server_name, self.action, self.execute, False)
         self.server.start()
         self.task_queue = task_queue
         self.id = id
 
-        self.feedback_queue = queue.Queue()
-        self.result_queue = queue.Queue()
+        if self.feedback:
+            self.feedback_queue = queue.Queue()
+        if self.result:
+            self.result_queue = queue.Queue()
 
     def execute(self, goal):
-        task = (self.id, goal.number_to_square) # server id, task
-        print(f"Task added: (server_id, task) -- {task}")
+        task = (self.server_name, goal) # server id, task
+        print(f"Task added: (server_id, task) -- {task.__str__()}")
         self.task_queue.put(task)
 
         while self.result_queue.empty():
             rospy.sleep(0.2)
             if self.server.is_preempt_requested():
-                rospy.loginfo(f'[{self.id}] The goal has been preempted')
+                rospy.loginfo(f'[{self.server_name}] The goal has been preempted')
                 self.server.set_preempted()
                 return
             feedback = self.feedback_queue.get()
             self.server.publish_feedback(feedback)
+            self.feedback_queue.task_done()
 
         result = self.result_queue.get()
-        rospy.loginfo(f'[{self.id}] Sending result %d', result.squared_number)
+        rospy.loginfo(f'[{self.server_name}] Sending result:', result.__str__())
         self.server.set_succeeded(result)
+        self.result_queue.task_done()
 
 
 # for i in range(3):  # Let's say we have 3 servers
 #     t = threading.Thread(target=server_thread, args=(i,))
 #     t.start()
 
-rospy.init_node(f'square_number')
+rospy.init_node(f'HuskyActionServer', anonymous=True)
 
-for i in range(3):  # Let's say we have 3 servers
-    action_servers.append(SquareNumberServer(task_queue, i))
+action_servers['move_to'] = MoveToActionServer(server_name="move_to_location",
+                                               task_queue=task_queue,
+                                               )
+action_servers['pickup_object'] = PickupObjectActionServer(server_name="pick_up_object",
+                                                           task_queue=task_queue,
+                                                           )
+action_servers['put_object'] = PutObjectActionServer(server_name="put_object",
+                                                     task_queue=task_queue,
+                                                     )
+
+action_servers['open_seed_setter'] = OpenSeedActionServer(server_name="text_query_generation",
+                                                            task_queue=task_queue,
+                                                            )
+
+
 t = threading.Thread(target=server_thread)
 t.start()
 
@@ -227,25 +261,38 @@ while simulation_app.is_running():
     if not task_queue.empty():
         my_world.step(render=True)
         if my_world.is_playing():
-            server_id, task = task_queue.get()
-            print(f"Main thread processing: task: {task} server_id: {server_id}")
-        
-            # Simulate processing time
-            for i in range(5):
-                rospy.sleep(0.5)
+            server_name, task = task_queue.get()
+            print(f"Main thread processing: task: {task.__str__()} server_id: {server_name}")
 
-                # Sending feedback
-                feedback = SquareNumberFeedback()
-                feedback.current_step = i
-                action_servers[server_id].feedback_queue.put(feedback)
+            if server_name == "move_to_location":
+                pass
+            elif server_name == "pick_up_object":
+                pass
+            elif server_name == "put_object":
+                pass
+            elif server_name == "text_query_generation":
+                pass
+            else:
+                print(f"Unknown server name: {server_name}")
+                print(f"Task: {task.__str__()}")
+                continue
         
-            # If you want to indicate task completion via result
-            result = SquareNumberResult()
-            result.squared_number = task * task
-            action_servers[server_id].result_queue.put(result)
-            print(f"Result sent: {result}")
+            # # Simulate processing time
+            # for i in range(5):
+            #     rospy.sleep(0.5)
+
+            #     # Sending feedback
+            #     feedback = SquareNumberFeedback()
+            #     feedback.current_step = i
+            #     action_servers[server_id].feedback_queue.put(feedback)
         
-            task_queue.task_done()
+            # # If you want to indicate task completion via result
+            # result = SquareNumberResult()
+            # result.squared_number = task * task
+            # action_servers[server_id].result_queue.put(result)
+            # print(f"Result sent: {result}")
+        
+            # task_queue.task_done()
     else:
         for step in range(10):
             my_world.step(render=True)
