@@ -68,7 +68,7 @@ class PickPlace(tasks.PickPlace):
             create_robot=True,
             usd_path=husky_asset_path,
             position=np.array(self.cfg.husky_init_pose),
-            # orientation=np.array([1, 0, 0, 0.]),
+            # orientation=np.array([0.63698, 0, 0, -0.77088]),
             )
         )
         self.robots["husky"] = self.husky
@@ -116,7 +116,7 @@ class PickPlace(tasks.PickPlace):
             end_effector_prim_path=self.cfg.end_effector_stage_path,
             joint_prim_names=["finger_joint", "right_outer_knuckle_joint"],
             joint_opened_positions=np.array([0., 0.]),
-            joint_closed_positions=np.array([0.5, -0.5]),
+            joint_closed_positions=np.array([0.3, -0.3]),
             # action_deltas=np.array([-0.05, 0.05]),
         )
         

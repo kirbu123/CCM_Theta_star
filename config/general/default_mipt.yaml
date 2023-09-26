@@ -6,6 +6,19 @@
 # general
 logging_level: 'INFO' # 10 #
 
+ros: "humble" # ["noetic", "foxy", "humble"]
+
+ros_cfg:
+  noetic:
+    ros_v: 1 # ROS version
+    ros_bridge_extension: "omni.isaac.ros_bridge"
+  foxy:
+    ros_v: 2 # ROS version
+    ros_bridge_extension: "omni.isaac.ros2_bridge"
+  humble:
+    ros_v: 2 # ROS version
+    ros_bridge_extension: "omni.isaac.ros2_bridge-humble"
+
 
 ---
 # Background info
@@ -53,6 +66,7 @@ imu:
   action_graph_path: "/World/Husky_Robot/IMU"
   imu_stage_path: "/World/Husky_Robot/base_link/imu"
 
+
 ---
 # Navigation info
 
@@ -76,14 +90,15 @@ position_tol: 0.03
 ---
 # Pick and place task info
 
-target_position: [17.7, 0.7, 0]  # cube position
-target_orientation: [1, 0, 0, 0] # qw, qx, qy, qz cube orientation
-target_cube_size: [0.0515, 0.0515, 0.0515]
-target_cube_offset: null # Python read it as None
+pick_position: [17.7, 0.7, 0]  # cube position
+pick_orientation: [1, 0, 0, 0] # qw, qx, qy, qz cube orientation
+cube_size: [0.0515, 0.0515, 0.0515]
+cube_offset: null # Python read it as None
 
 
-husky_target_pose: [17.34, 0.56, 0.02]
-end_effector_offset: [0, 0, 0.05]
+place_pose: [17.13, 2.58, 0.02] # [17.34, 0.56, 0.02]
+
+end_effector_offset: [0, 0, 0.033]
 
 
 ---

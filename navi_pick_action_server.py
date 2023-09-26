@@ -55,7 +55,7 @@ import actionlib
 import threading
 import queue
 
-from src.action_servers.servers import MoveToActionServer, PickupObjectActionServer, PutObjectActionServer, OpenSeedActionServer
+from src.actions.servers import MoveToActionServer, PickupObjectActionServer, PutObjectActionServer, OpenSeedActionServer
 
 from my_action_package.msg import SquareNumberAction, SquareNumberFeedback, SquareNumberResult
 from communication_msgs.msg import TaskArray
@@ -64,6 +64,8 @@ from communication_msgs.msg import PutObjectAction, PutObjectResult
 from communication_msgs.msg import MoveToAction, MoveToResult, MoveToFeedback
 from communication_msgs.msg import OpenSeeDSetterAction, OpenSeeDSetterGoal
 #!#######!#######!######
+
+from src.actions.actions import HuskyController
 
 cfg = get_config()
 
@@ -123,6 +125,44 @@ if cfg.use_background:
 else:
     stage.add_reference_to_stage(assets_root_path + "/Isaac/Environments/Grid/default_environment.usd")
 
+#? Setup scene
+#?#####################
+
+# # # add table
+# mipt_env_path = cfg.table_usd_path
+# add_reference_to_stage(usd_path=mipt_env_path, prim_path="/World/table")
+# stage = get_current_stage()
+# position = np.array(cfg.table_position)
+# orientation = np.array(cfg.table_orientation)
+# mipt_table = XFormPrim(prim_path = "/World/table", position=position, orientation=orientation)
+
+# # add trash can
+# container_path = cfg.can_usd_path
+# add_reference_to_stage(usd_path=container_path, prim_path="/World/can")
+# stage = get_current_stage()
+# position = np.array(cfg.can_position)
+# orientation = np.array(cfg.can_orientation)
+# trash_can = XFormPrim(prim_path = "/World/can", position=position, orientation=orientation)
+
+# # # add opened drawer
+# container_path = cfg.drawer_usd_path
+# add_reference_to_stage(usd_path=container_path, prim_path="/World/drawer")
+# stage = get_current_stage()
+# position = np.array(cfg.drawer_position)
+# orientation = np.array(cfg.drawer_orientation)
+# trash_can = XFormPrim(prim_path = "/World/drawer", position=position, orientation=orientation)
+
+# # # add cup
+# obj_path = cfg.cup_usd_path
+# add_reference_to_stage(usd_path=obj_path, prim_path="/World/cup")
+# stage = get_current_stage()
+# position = np.array(cfg.cup_position)
+# orientation = np.array(cfg.cup_orientation)
+# trash_can = XFormPrim(prim_path = "/World/cup", position=position, orientation=orientation)
+
+#?#####################
+#?#####################
+
 # traj=[[-2,-2]]
 # traj=[[3,3], [3, -3], [-3, -3], [-3, 3], [0, 0]]
 
@@ -137,32 +177,35 @@ navigation_finish = False
 # relative_target_position = np.array([-0.3, -0.3, 0]) / get_stage_units()
 # relative_target_position[2] = cube_size[2] / 2.0
 
-pick_task = PickPlace(name="denso_pick_place",
-                      cfg=cfg,
-                      )
 
-my_world.add_task(pick_task)
-my_world.reset()
-my_denso = my_world.scene.get_object("my_ur5")
+controller = HuskyController(cfg=cfg, world=my_world)
 
-my_world.reset()
-husky=pick_task.robots["husky"]
+# pick_task = PickPlace(name="denso_pick_place",
+#                       cfg=cfg,
+#                       )
 
-scene={}
+# my_world.add_task(pick_task)
+# my_world.reset()
+# my_denso = my_world.scene.get_object("my_ur5")
 
-add_goals(my_world, scene, cfg.trajectory)
-my_world.reset()
+# my_world.reset()
+# husky=pick_task.robots["husky"]
+
+# scene={}
+
+# add_goals(my_world, scene, cfg.trajectory)
+# my_world.reset()
 
 
 
-####################################### Init Husky controller ################################
-husky_controller = WheelBasePoseController(name="cool_controller",
-                                           open_loop_wheel_controller=
-                                           DifferentialController(name="simple_control",
-                                           wheel_radius=cfg.wheel_radius,
-                                           wheel_base=cfg.wheel_base),
-                                           is_holonomic=False,)
-articulation_controller = my_denso.get_articulation_controller()
+# ####################################### Init Husky controller ################################
+# husky_controller = WheelBasePoseController(name="cool_controller",
+#                                            open_loop_wheel_controller=
+#                                            DifferentialController(name="simple_control",
+#                                            wheel_radius=cfg.wheel_radius,
+#                                            wheel_base=cfg.wheel_base),
+#                                            is_holonomic=False,)
+# articulation_controller = my_denso.get_articulation_controller()
 
 
 ##? set up cameras
@@ -190,47 +233,6 @@ action_servers = {}
 def server_thread():
     rospy.spin()  # This will block and process ROS callbacks
 
-class HuskyActionServer:
-    def __init__(self, 
-                 cfg: Config,
-                 server_name: str,
-                 task_queue: queue,
-                ):
-        self.action = cfg.action_servers[server_name].action
-        self.result = cfg.action_servers[server_name].result
-        self.feedback = cfg.action_servers[server_name].feedback
-        self.server_name = server_name
-
-        self.server = actionlib.SimpleActionServer(server_name, self.action, self.execute, False)
-        self.server.start()
-        self.task_queue = task_queue
-        self.id = id
-
-        if self.feedback:
-            self.feedback_queue = queue.Queue()
-        if self.result:
-            self.result_queue = queue.Queue()
-
-    def execute(self, goal):
-        task = (self.server_name, goal) # server id, task
-        print(f"Task added: (server_id, task) -- {task.__str__()}")
-        self.task_queue.put(task)
-
-        while self.result_queue.empty():
-            rospy.sleep(0.2)
-            if self.server.is_preempt_requested():
-                rospy.loginfo(f'[{self.server_name}] The goal has been preempted')
-                self.server.set_preempted()
-                return
-            feedback = self.feedback_queue.get()
-            self.server.publish_feedback(feedback)
-            self.feedback_queue.task_done()
-
-        result = self.result_queue.get()
-        rospy.loginfo(f'[{self.server_name}] Sending result:', result.__str__())
-        self.server.set_succeeded(result)
-        self.result_queue.task_done()
-
 
 # for i in range(3):  # Let's say we have 3 servers
 #     t = threading.Thread(target=server_thread, args=(i,))
@@ -238,10 +240,10 @@ class HuskyActionServer:
 
 rospy.init_node(f'HuskyActionServer', anonymous=True)
 
-action_servers['move_to'] = MoveToActionServer(server_name="move_to_location",
+action_servers['move_to_location'] = MoveToActionServer(server_name="move_to_location",
                                                task_queue=task_queue,
                                                )
-action_servers['pickup_object'] = PickupObjectActionServer(server_name="pick_up_object",
+action_servers['pick_up_object'] = PickupObjectActionServer(server_name="pick_up_object",
                                                            task_queue=task_queue,
                                                            )
 action_servers['put_object'] = PutObjectActionServer(server_name="put_object",
@@ -257,7 +259,7 @@ t = threading.Thread(target=server_thread)
 t.start()
 
 while simulation_app.is_running():
-    print(f"Checking queue...")
+    # print(f"Checking queue...")
     if not task_queue.empty():
         my_world.step(render=True)
         if my_world.is_playing():
@@ -265,39 +267,29 @@ while simulation_app.is_running():
             print(f"Main thread processing: task: {task.__str__()} server_id: {server_name}")
 
             if server_name == "move_to_location":
-                pass
+                controller.move_to_location(task, action_servers[server_name])
+                time.sleep(2)
+                task_queue.task_done()
+
             elif server_name == "pick_up_object":
-                pass
+                controller.pickup_object(task, action_servers[server_name])
+                time.sleep(2)
+                task_queue.task_done()
             elif server_name == "put_object":
-                pass
+                controller.put_object(task, action_servers[server_name])
+                time.sleep(2)
+                task_queue.task_done()
             elif server_name == "text_query_generation":
                 pass
             else:
                 print(f"Unknown server name: {server_name}")
                 print(f"Task: {task.__str__()}")
                 continue
-        
-            # # Simulate processing time
-            # for i in range(5):
-            #     rospy.sleep(0.5)
-
-            #     # Sending feedback
-            #     feedback = SquareNumberFeedback()
-            #     feedback.current_step = i
-            #     action_servers[server_id].feedback_queue.put(feedback)
-        
-            # # If you want to indicate task completion via result
-            # result = SquareNumberResult()
-            # result.squared_number = task * task
-            # action_servers[server_id].result_queue.put(result)
-            # print(f"Result sent: {result}")
-        
-            # task_queue.task_done()
     else:
+        print(f"Waiting for tasks... 1, 2, 3... 10")
         for step in range(10):
             my_world.step(render=True)
             time.sleep(0.5)
-            print(f"Waiting for tasks... Step {step}")
         
 
 

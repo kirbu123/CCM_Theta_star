@@ -24,7 +24,7 @@ tf:
 cameras:
   cameras_list: ["zed", "realsense_rear", "realsense_front"] # default list for setup ros publishers
   action_graph_stage_path: "/World/Husky_Robot/ROS_Cameras"
-  action_graph_id: "" # Leave it empty, it's placeholder 
+
   zed:
     stage_path: "/World/Husky_Robot/fence_link/zed/husky_front_left"
     horizontal_aperture: 5.12

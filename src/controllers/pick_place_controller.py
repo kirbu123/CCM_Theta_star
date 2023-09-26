@@ -125,7 +125,7 @@ class MPickPlaceController(BaseController):
         Returns:
             ArticulationAction: action to be executed by the ArticulationController
         """
-        print(f"Now event: {self._event}")
+        # print(f"Now event: {self._event}")
         if end_effector_offset is None:
             end_effector_offset = np.array([0, 0, 0])
         if self._pause or self.is_done():

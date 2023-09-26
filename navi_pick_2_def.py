@@ -42,35 +42,23 @@ from src.controllers.pick_place import PickPlaceController
 from src.config import get_config, Config
 
 # ur rtde communication
-import rtde_control
-import rtde_receive
+# import rtde_control
+# import rtde_receive
 import sys
 
 cfg = get_config()
-
-parser = argparse.ArgumentParser()
-# parser.add_argument("--test", default=False, action="store_true", help="Run in test mode")
-parser.add_argument(
-    "--robot-ip",
-    type=str,
-    default="127.0.0.1",
-    help="IP adress of robot Real world UR Polyscope or VM UR Polyscope",
-)
-# args, unknown = parser.parse_known_args()
-arg = parser.parse_args()
-
 
 
 ###################################### Init Scene #############################################
 my_world = World(stage_units_in_meters=1.0)
 
-# add table
-mipt_env_path = cfg.table_usd_path
-add_reference_to_stage(usd_path=mipt_env_path, prim_path="/World/table")
-stage = get_current_stage()
-position = np.array(cfg.table_position)
-orientation = np.array(cfg.table_orientation)
-mipt_table = XFormPrim(prim_path = "/World/table", position=position, orientation=orientation)
+# # add table
+# mipt_env_path = cfg.table_usd_path
+# add_reference_to_stage(usd_path=mipt_env_path, prim_path="/World/table")
+# stage = get_current_stage()
+# position = np.array(cfg.table_position)
+# orientation = np.array(cfg.table_orientation)
+# mipt_table = XFormPrim(prim_path = "/World/table", position=position, orientation=orientation)
 
 # add trash can
 # container_path = cfg.can_usd_path
@@ -80,21 +68,21 @@ mipt_table = XFormPrim(prim_path = "/World/table", position=position, orientatio
 # orientation = np.array(cfg.can_orientation)
 # trash_can = XFormPrim(prim_path = "/World/can", position=position, orientation=orientation)
 
-# add opened drawer
-container_path = cfg.drawer_usd_path
-add_reference_to_stage(usd_path=container_path, prim_path="/World/drawer")
-stage = get_current_stage()
-position = np.array(cfg.drawer_position)
-orientation = np.array(cfg.drawer_orientation)
-trash_can = XFormPrim(prim_path = "/World/drawer", position=position, orientation=orientation)
+# # add opened drawer
+# container_path = cfg.drawer_usd_path
+# add_reference_to_stage(usd_path=container_path, prim_path="/World/drawer")
+# stage = get_current_stage()
+# position = np.array(cfg.drawer_position)
+# orientation = np.array(cfg.drawer_orientation)
+# trash_can = XFormPrim(prim_path = "/World/drawer", position=position, orientation=orientation)
 
-# add cup
-obj_path = cfg.cup_usd_path
-add_reference_to_stage(usd_path=obj_path, prim_path="/World/cup")
-stage = get_current_stage()
-position = np.array(cfg.cup_position)
-orientation = np.array(cfg.cup_orientation)
-trash_can = XFormPrim(prim_path = "/World/cup", position=position, orientation=orientation)
+# # add cup
+# obj_path = cfg.cup_usd_path
+# add_reference_to_stage(usd_path=obj_path, prim_path="/World/cup")
+# stage = get_current_stage()
+# position = np.array(cfg.cup_position)
+# orientation = np.array(cfg.cup_orientation)
+# trash_can = XFormPrim(prim_path = "/World/cup", position=position, orientation=orientation)
 
 
 pick_task = PickPlace(name="denso_pick_place",
@@ -132,19 +120,21 @@ pick_place_controller = PickPlaceController(name="controller",
                             cfg=cfg,
                             )
 
-# IP adress of robot Real world UR Polyscope or VM UR Polyscope
-try:
-    rtde_r = rtde_receive.RTDEReceiveInterface(arg.robot_ip)
-    rtde_c = rtde_control.RTDEControlInterface(arg.robot_ip)
-    # ur5.set_joint_positions(np.array(rtde_r.getActualQ()))
-    connect_to_rtde = True
-except:
-    print("[ERROR] Robot is not connected")
-    # close isaac sim
-    # simulation_app.close()
-    # sys.exit()
-    connect_to_rtde = False
-                      
+# # IP adress of robot Real world UR Polyscope or VM UR Polyscope
+# try:
+#     rtde_r = rtde_receive.RTDEReceiveInterface(cfg.rtde_robot_ip)
+#     rtde_c = rtde_control.RTDEControlInterface(cfg.rtde_robot_ip)
+#     # ur5.set_joint_positions(np.array(rtde_r.getActualQ()))
+#     connect_to_rtde = True
+# except:
+#     print("[ERROR] Robot is not connected")
+#     # close isaac sim
+#     # simulation_app.close()
+#     # sys.exit()
+#     connect_to_rtde = False
+
+connect_to_rtde = False
+
 # Parameters for rtde
 velocity = 0.1
 acceleration = 0.1
@@ -369,10 +359,10 @@ while simulation_app.is_running():
             step4 = robot_action(com=3, obj=obj_move_str, location=loc_put_str)
 
         
-# rtde control stop script and disconnect
-rtde_c.servoStop()
-rtde_c.stopScript()
-rtde_r.disconnect()
+# # rtde control stop script and disconnect
+# rtde_c.servoStop()
+# rtde_c.stopScript()
+# rtde_r.disconnect()
 
 # close Isaac Sim
 simulation_app.close() 
