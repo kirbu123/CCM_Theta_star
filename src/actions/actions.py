@@ -63,10 +63,10 @@ class HuskyController:
         _object = task.object.replace(' ', '_')
 
         obj_move_str = ""
-        if _object != "unspecified":
-                obj_move_str = _object
-        elif _location != "unspecified":
+        if _location != "unspecified":
                 obj_move_str = _location
+        elif _object != "unspecified":
+                obj_move_str = _object
         else:
             return False
         print(f"obj_move_str: {str(obj_move_str)}")
@@ -211,15 +211,12 @@ class HuskyController:
             position_obj_2[-1] = position_obj_2[-1] + 0.036 if obj_loc_str == "table" else position_obj_2[-1] + 0.06 # offset of place
             print(f"position_obj_loc: {position_obj_2}\n")
         else:
-             pose_obj_2[-1] = pose_obj_2[-1] + 0.4
+             position_obj_2[-1] = position_obj_2[-1] + 0.4
             
 
         position, orientation = self.husky.get_world_pose()
-        self.pick_place_controller._cspace_controller.reset()
-        
-        self.pick_place_controller.resume()
-        print(f"is done: {self.pick_place_controller.is_done()}")
-        while not self.pick_place_controller.is_done():
+
+        for _ in range(10):
             wheel_actions=self.husky_controller.forward(start_position=position,
                                                     start_orientation=orientation,
                                                     goal_position=position[:2],
@@ -228,6 +225,22 @@ class HuskyController:
                                                     position_tol = self.cfg.position_tol,)
             wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
             self.husky.apply_wheel_actions(wheel_actions)
+            self.world.step(render=True) 
+        
+        position, orientation = self.husky.get_world_pose()
+        self.pick_place_controller._cspace_controller.reset()
+        
+        self.pick_place_controller.resume()
+        print(f"is done: {self.pick_place_controller.is_done()}")
+        while not self.pick_place_controller.is_done():
+            # wheel_actions=self.husky_controller.forward(start_position=position,
+            #                                         start_orientation=orientation,
+            #                                         goal_position=position[:2],
+            #                                         lateral_velocity=self.cfg.lateral_velocity,
+            #                                         yaw_velocity=self.cfg.yaw_velocity,
+            #                                         position_tol = self.cfg.position_tol,)
+            # wheel_actions.joint_velocities =np.tile(wheel_actions.joint_velocities, 2)
+            # self.husky.apply_wheel_actions(wheel_actions)
             self.world.step(render=True)                
 
             observations = self.world.get_observations()

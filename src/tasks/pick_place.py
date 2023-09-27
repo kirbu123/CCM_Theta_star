@@ -116,7 +116,7 @@ class PickPlace(tasks.PickPlace):
             end_effector_prim_path=self.cfg.end_effector_stage_path,
             joint_prim_names=["finger_joint", "right_outer_knuckle_joint"],
             joint_opened_positions=np.array([0., 0.]),
-            joint_closed_positions=np.array([0.3, -0.3]),
+            joint_closed_positions=np.array([0.32, -0.32]),
             # action_deltas=np.array([-0.05, 0.05]),
         )
         
