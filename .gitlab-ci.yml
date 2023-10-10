@@ -8,4 +8,7 @@ pre-commit:
     - pip install pre-commit
   script:
     - pre-commit  install
-    - pre-commit run --all-files
+    - pre-commit run --all-files > pre-commit.log 2>&1
+  artifacts:
+    paths:
+      - pre-commit.log
