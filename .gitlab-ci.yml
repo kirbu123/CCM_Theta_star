@@ -2,12 +2,7 @@ stages:
   - pre-commit
 
 pre-commit:
-  image: python:3.7
   stage: pre-commit
-  before_script:
-    - python -m venv venv  # Create a virtual environment named 'venv'
-    - source venv/bin/activate  # Activate the virtual environment
-    - pip install pre-commit
   script:
     - pre-commit  install
     - pre-commit run --all-files
