@@ -1,20 +1,19 @@
+from typing import List, Optional, Tuple, Union
+
 import lula
 import numpy as np
-
-from .world import LulaWorld
-from typing import List, Tuple, Union, Optional
-from omni.isaac.core.utils.numpy.rotations import quats_to_rot_matrices
-from omni.isaac.core.utils.string import find_unique_string_name
-from omni.isaac.core.utils.prims import is_prim_path_valid, delete_prim
-from omni.isaac.core.utils.stage import get_stage_units
-from omni.isaac.core.prims.xform_prim import XFormPrim
 from omni.isaac.core import objects
+from omni.isaac.core.utils.numpy.rotations import quats_to_rot_matrices
+from omni.isaac.core.utils.stage import get_stage_units
+
 from . import utils as lula_utils
+from .world import LulaWorld
 
 
 class LulaInterfaceHelper(LulaWorld):
     """
-    Class containing functions common in Lula based algorithms.  The main utility of this class is handling the tracking of the robot base
+    Class containing functions common in Lula based algorithms.
+    The main utility of this class is handling the tracking of the robot base
     and returning basic robot information
     """
 
@@ -34,9 +33,11 @@ class LulaInterfaceHelper(LulaWorld):
         to be at the origin with identity rotation.
 
         Args:
-            robot_position (np.array): (3 x 1) translation vector describing the translation of the robot base relative to the USD stage origin.
+            robot_position (np.array): (3 x 1) translation vector
+            describing the translation of the robot base relative to the USD stage origin.
                 The translation vector should be specified in the units of the USD stage
-            robot_orientation (np.array): (4 x 1) quaternion describing the orientation of the robot base relative to the USD stage global frame
+            robot_orientation (np.array): (4 x 1) quaternion describing the orientation
+            of the robot base relative to the USD stage global frame
         """
         # all object poses are relative to the position of the robot base
         robot_position = robot_position * self._meters_per_unit
@@ -52,7 +53,8 @@ class LulaInterfaceHelper(LulaWorld):
 
     def get_active_joints(self):
         return [
-            self._robot_description.c_space_coord_name(i) for i in range(self._robot_description.num_c_space_coords())
+            self._robot_description.c_space_coord_name(i)
+            for i in range(self._robot_description.num_c_space_coords())
         ]
 
     def get_watched_joints(self) -> List:
@@ -63,7 +65,9 @@ class LulaInterfaceHelper(LulaWorld):
         """
         return []
 
-    def get_end_effector_pose(self, active_joint_positions: np.array, frame_name: str) -> Tuple[np.array, np.array]:
+    def get_end_effector_pose(
+        self, active_joint_positions: np.array, frame_name: str
+    ) -> Tuple[np.array, np.array]:
         """Return pose of robot end effector given current joint positions.
         The end effector position will be transformed into world coordinates based
         on the believed position of the robot base.  See set_robot_base_pose()
@@ -86,7 +90,9 @@ class LulaInterfaceHelper(LulaWorld):
         return translation / self._meters_per_unit, rotation
 
     def update_world(self, updated_obstacles: Optional[List] = None):
-        LulaWorld.update_world(self, updated_obstacles, self._robot_pos, self._robot_rot, self._robot_base_moved)
+        LulaWorld.update_world(
+            self, updated_obstacles, self._robot_pos, self._robot_rot, self._robot_base_moved
+        )
         self._robot_base_moved = False
 
     def add_cuboid(
@@ -102,7 +108,9 @@ class LulaInterfaceHelper(LulaWorld):
         return LulaWorld.add_sphere(self, sphere, static, self._robot_pos, self._robot_rot)
 
     def add_capsule(
-        self, capsule: Union[objects.capsule.DynamicCapsule, objects.capsule.VisualCapsule], static: bool = False
+        self,
+        capsule: Union[objects.capsule.DynamicCapsule, objects.capsule.VisualCapsule],
+        static: bool = False,
     ):
         return LulaWorld.add_capsule(self, capsule, static, self._robot_pos, self._robot_rot)
 

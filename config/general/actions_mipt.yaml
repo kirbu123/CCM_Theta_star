@@ -4,7 +4,7 @@
 ##################################################################################################
 
 # general
-logging_level: 'INFO' # 10 #
+logging_level: "INFO" # 10 #
 
 ros: "humble" # ["noetic", "foxy", "humble"]
 
@@ -19,20 +19,17 @@ ros_cfg:
     ros_v: 2 # ROS version
     ros_bridge_extension: "omni.isaac.ros2_bridge-humble"
 
----
 # Background info
 
 background_stage_path: "/background"
 use_background: true
 use_omni_background: false
-background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd" 
+background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd"
 
----
 #Sensors info
 
 tf:
   action_graph_path: "/World/Husky_Robot/TF"
-
 
 cameras:
   cameras_list: ["husky_front_left", "husky_rear_left", "ur_front_left"] # default list for setup ros publishers
@@ -66,8 +63,6 @@ imu:
   action_graph_path: "/World/Husky_Robot/IMU"
   imu_stage_path: "/World/Husky_Robot/base_link/imu"
 
-
----
 # Navigation info
 
 # navigation_end: [1.4883547, 1.3499106, 0]
@@ -85,15 +80,11 @@ husky_pick_position:
 husky_place_position:
   - [2, 2.5]
 
-
 lateral_velocity: 1.3 # 0.5
 yaw_velocity: 1.2 # 0.5
-position_tol: 0.3 
+position_tol: 0.3
 
-
----
 # Pick and place task info
-
 
 # pick_position: [2.1, 1.7, 0]
 pick_position: [2, 0.5, 0.05]
@@ -101,17 +92,13 @@ pick_orientation: [1, 0, 0, 0] # qw, qx, qy, qz
 cube_size: [0.0515, 0.0515, 0.0515]
 cube_offset: null # Python read it as None
 
-
 # place_pose: [1.82, 2.95, 0]
 place_pose: [2, 2.5, 0.45]
-
 
 # end_effector_offset: [0, 0, 0.033]
 
 end_effector_offset: [0, 0, 0]
 
-
----
 # Controllers info
 
 control:
@@ -121,8 +108,6 @@ control:
     events_dt: [0.008, 0.005, 0.1, 0.005, 0.0025, 0.003, 0.0025, 1, 0.008, 0.08]
     end_effector_initial_height: 0.76
 
-
----
 # Robot info
 
 husky_minimal_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky.usd"
@@ -135,7 +120,7 @@ wheel_radius: 0.3
 wheel_base: 0.5
 
 ur5_usd_path_simple: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky-2/assets/husky/ur5_with_gripper.usd"
-ur5_usd_path:  "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/ur5_with_gripper_and_cam_2.usd" # good
+ur5_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/ur5_with_gripper_and_cam_2.usd" # good
 
 ur5_stage_path: "/World/ur5"
 obj_stage_path: "/World/obj"
@@ -151,9 +136,6 @@ joints_default_positions: [3.1415927, -2.871760, 2.799204, -3.072348, -1.581982,
 
 ur5_init_pose: [0, -0.5, -2, 0, 1.570, 0]
 
-
----
 # RTDE
 
 rtde_robot_ip: "127.0.0.1"
-

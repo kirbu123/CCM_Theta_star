@@ -220,6 +220,3 @@ target_link_libraries(depth_compress_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-
-

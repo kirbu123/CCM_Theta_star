@@ -4,18 +4,15 @@
 ##################################################################################################
 
 # general
-logging_level: 'INFO' # 10 #
+logging_level: "INFO" # 10 #
 
-
----
 # Background info
 
 background_stage_path: "/background"
 use_background: false
 use_omni_background: false
-background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd" 
+background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd"
 
----
 #Sensors info
 
 tf:
@@ -53,7 +50,6 @@ imu:
   action_graph_path: "/World/Husky_Robot/IMU"
   imu_stage_path: "/World/Husky_Robot/base_link/imu"
 
----
 # Navigation info
 
 # navigation_end: [1.4883547, 1.3499106, 0]
@@ -71,14 +67,10 @@ husky_pick_position:
 husky_place_position:
   - [2, 2.5]
 
-
 lateral_velocity: 0.5
 position_tol: 0.1
 
-
----
 # Pick and place task info
-
 
 # pick_position: [2.1, 1.7, 0]
 pick_position: [2, 0.5, 0.05]
@@ -86,17 +78,13 @@ pick_orientation: [1, 0, 0, 0] # qw, qx, qy, qz
 cube_size: [0.0515, 0.0515, 0.0515]
 cube_offset: null # Python read it as None
 
-
 # place_pose: [1.82, 2.95, 0]
 place_pose: [2, 2.5, 0.45]
-
 
 end_effector_offset: [0, 0, 0.033]
 
 # end_effector_offset: [0, 0, 0]
 
-
----
 # Controllers info
 
 control:
@@ -106,8 +94,6 @@ control:
     events_dt: [0.008, 0.005, 0.1, 0.005, 0.0025, 0.003, 0.0025, 1, 0.008, 0.08]
     end_effector_initial_height: 0.76
 
-
----
 # Robot info
 
 husky_minimal_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky.usd"
@@ -135,7 +121,7 @@ ur5_relative_pose: [0.3312, 0, 0.257]
 # joints_default_positions: [0, -1.570, 0, 0, 1.570, 0] # Original default joints pose
 joints_default_positions: [0, -0.5, -2, 0, 1.570, 0]
 ur5_init_pose: [0, -0.5, -2, 0, 1.570, 0]
----
+
 # Table and container
 table_usd_path: "/home/zhang/.local/share/ov/pkg/isaac_sim-2022.2.1/extension_examples/virtual-husky-2/asset/Table_mipt/Table_mipt.usd"
 table_position: [2.7, 0.5, 0]

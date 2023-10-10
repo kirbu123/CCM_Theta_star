@@ -9,7 +9,7 @@
     <parent link="world"/>
     <child link="ur5_base_link"/>
   </joint>
-  
+
   <link name="ur5_base_link">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 3.141592653589793"/>
@@ -27,7 +27,7 @@
       </geometry>
     </collision>
   </link>
-  
+
   <link name="ur5_shoulder_link">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 3.141592653589793"/>
@@ -45,7 +45,7 @@
       </geometry>
     </collision>
   </link>
-  
+
   <link name="ur5_upper_arm_link">
       <visual>
       <origin xyz="0 0 0.13585" rpy="1.5707963265 0 -1.5707963265"/>
@@ -63,7 +63,7 @@
       </geometry>
     </collision>
   </link>
-    
+
   <link name="ur5_forearm_link">
       <visual>
       <origin xyz="0 0 0.0165" rpy="1.5707963265 0 -1.5707963265"/>
@@ -81,7 +81,7 @@
       </geometry>
     </collision>
   </link>
-    
+
   <link name="ur5_wrist_1_link">
       <visual>
       <origin xyz="0 0 -0.093" rpy="1.5707963265 0 0"/>
@@ -99,7 +99,7 @@
       </geometry>
     </collision>
   </link>
-  
+
   <link name="ur5_wrist_2_link">
       <visual>
       <origin xyz="0 0 -0.095" rpy="0 0 0"/>
@@ -117,7 +117,7 @@
       </geometry>
     </collision>
   </link>
-    
+
   <link name="ur5_wrist_3_link">
       <visual>
       <origin xyz="0 0 -0.0818" rpy="1.5707963265 0 0"/>
@@ -135,7 +135,7 @@
       </geometry>
     </collision>
   </link>
-    
+
   <joint name="ur5_ee_fixed_joint" type="fixed">
     <parent link="ur5_wrist_3_link" />
     <child link = "ur5_ee_link" />
@@ -158,7 +158,7 @@
       <parent link="ur5_wrist_3_link"/>
       <child link="ur5_tool0"/>
     </joint>
-  
+
   <joint name="ur5_shoulder_pan_joint" type="revolute">
     <parent link="ur5_base_link"/>
     <child link="ur5_shoulder_link"/>
@@ -167,9 +167,9 @@
     <limit effort="150" lower="-6.28318530717959" upper="6.28318530717959" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-    
 
-  
+
+
   <joint name="ur5_shoulder_lift_joint" type="revolute">
     <parent link="ur5_shoulder_link"/>
     <child link="ur5_upper_arm_link"/>
@@ -178,9 +178,9 @@
     <limit effort="150" lower="-6.28318530717959" upper="6.28318530717959" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
 
-  
+
+
   <joint name="ur5_elbow_joint" type="revolute">
     <parent link="ur5_upper_arm_link"/>
     <child link="ur5_forearm_link"/>
@@ -189,9 +189,9 @@
     <limit effort="150" lower="-3.141592653589793" upper="3.141592653589793" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
 
-  
+
+
   <joint name="ur5_wrist_1_joint" type="revolute">
     <parent link="ur5_forearm_link"/>
     <child link="ur5_wrist_1_link"/>
@@ -200,10 +200,10 @@
     <limit effort="28" lower="-6.28318530717959" upper="6.28318530717959" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
-    
 
-  
+
+
+
   <joint name="ur5_wrist_2_joint" type="revolute">
     <parent link="ur5_wrist_1_link"/>
     <child link="ur5_wrist_2_link"/>
@@ -212,9 +212,9 @@
     <limit effort="28" lower="-6.28318530717959" upper="6.28318530717959" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
 
-  
+
+
   <joint name="ur5_wrist_3_joint" type="revolute">
     <parent link="ur5_wrist_2_link"/>
     <child link="ur5_wrist_3_link"/>
@@ -223,9 +223,9 @@
     <limit effort="28" lower="-6.28318530717959" upper="6.28318530717959" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
 
 
 
-  
+
+
 </robot>

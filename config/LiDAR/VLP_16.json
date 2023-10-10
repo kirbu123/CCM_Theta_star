@@ -3,8 +3,7 @@
   "type": "lidar",
   "name": "VLP 16",
   "driveWorksId": "GENERIC",
-  "profile":
-  {
+  "profile": {
     "scanType": "rotary",
     "intensityProcessing": "normalization",
     "rayType": "IDEALIZED",
@@ -30,8 +29,7 @@
     "azimuthErrorMean": 0.0,
     "azimuthErrorStd": 0.015,
     "elevationErrorMean": 0.0,
-    "elevationErrorStd": 0.0000,
-
+    "elevationErrorStd": 0.0,
 
     "reportTypes": "Strongest, Last, Dual",
     "maxReturns": 2,
@@ -43,15 +41,15 @@
 
     "numberOfEmitters": 16,
 
-    "emitters":
-    {
+    "emitters": {
       "azimuthDeg": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
       "elevationDeg": [-15.0, -11.0, -9.0, -7.0, -5.0, -3.0, -1.0, 1.0, 3.0, 5.0, 7.0, 9.0, 11.0, 13.0, 15.0],
-      "fireTimeNs": [2304, 4608, 6912, 9216, 11520, 13824, 16128, 18432, 20736, 23040, 25344, 27648, 29952, 32256, 34560, 36864]
-
+      "fireTimeNs": [
+        2304, 4608, 6912, 9216, 11520, 13824, 16128, 18432, 20736, 23040, 25344, 27648, 29952, 32256, 34560,
+        36864
+      ]
     },
 
     "intensityMappingType": "LINEAR"
   }
 }
-

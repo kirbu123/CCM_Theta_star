@@ -1,41 +1,36 @@
-from pxr.Usd import Stage
 import omni.graph.core as og
-from omni.isaac.kit import SimulationApp
 from omni.isaac.core.utils.prims import set_targets
+from omni.isaac.kit import SimulationApp
+from pxr.Usd import Stage
 
 from src.config import Config
 
 
-def setup_camera_tf_graph(cfg: Config,
-                       simulation_app: SimulationApp,
-                       stage: Stage,
-                       controller: og.Controller,
-                       camera_name: str):
-    '''Setup the action graph for publishing Images, Depths and CameraInfo to ROS1/2'''
+def setup_camera_tf_graph(
+    cfg: Config, simulation_app: SimulationApp, stage: Stage, controller: og.Controller, camera_name: str
+):
+    """Setup the action graph for publishing Images, Depths and CameraInfo to ROS1/2"""
 
     keys = og.Controller.Keys
     graph = og.get_graph_by_path(cfg.tf.action_graph_path)
 
-    ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split('-')[0]
+    ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split("-")[0]
     ros_v = cfg.ros_cfg[cfg.ros].ros_v
 
-    # controller = og.Controller(graph_id=cfg.cameras.action_graph_id)
     controller.edit(
         graph,
         {
             keys.CREATE_NODES: [
-                # ("OnTick", "omni.graph.action.OnPlaybackTick"),
                 (f"{camera_name}_TfPublisher", f"{ros_bridge}.ROS{ros_v}PublishTransformTree"),
             ],
             keys.CONNECT: [
                 ("ReadSimTime.outputs:simulationTime", f"{camera_name}_TfPublisher.inputs:timeStamp"),
                 ("OnTick.outputs:tick", f"{camera_name}_TfPublisher.inputs:execIn"),
-
             ],
         },
     )
 
-    ##* ##########################
+    # * ##########################
 
     set_targets(
         prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + f"/{camera_name}_TfPublisher"),
@@ -48,23 +43,23 @@ def setup_camera_tf_graph(cfg: Config,
         target_prim_paths=[cfg.cameras[camera_name].stage_path],
     )
     simulation_app.update()
-    
+
     controller.evaluate_sync(graph)
 
 
 def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
-    '''Setup the action graph for publishing Husky and LIDAR tf transforms to ROS1/2'''
+    """Setup the action graph for publishing Husky and LIDAR tf transforms to ROS1/2"""
 
-    ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split('-')[0]
+    ros_bridge = cfg.ros_cfg[cfg.ros].ros_bridge_extension.split("-")[0]
     ros_v = cfg.ros_cfg[cfg.ros].ros_v
 
-    controller = og.Controller(graph_id ="ros_tf_graph")
+    controller = og.Controller(graph_id="ros_tf_graph")
 
     (graph, _, _, _) = controller.edit(
         {"graph_path": cfg.tf.action_graph_path, "evaluator_name": "execution"},
         {
             og.Controller.Keys.CREATE_NODES: [
-                ##* TF Tree
+                # * TF Tree
                 ("OnTick", "omni.graph.action.OnTick"),
                 ("PublishClock", f"{ros_bridge}.ROS{ros_v}PublishClock"),
                 ("ReadSimTime", "omni.isaac.core_nodes.IsaacReadSimulationTime"),
@@ -77,21 +72,17 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
             ],
             og.Controller.Keys.CONNECT: [
                 ("OnTick.outputs:tick", "PublishClock.inputs:execIn"),
-
                 ("OnTick.outputs:tick", "tfPublisher.inputs:execIn"),
                 ("OnTick.outputs:tick", "lidarTfPublisher.inputs:execIn"),
                 ("OnTick.outputs:tick", "ur5TfPublisher.inputs:execIn"),
-                    
                 ("ReadSimTime.outputs:simulationTime", "tfPublisher.inputs:timeStamp"),
                 ("ReadSimTime.outputs:simulationTime", "lidarTfPublisher.inputs:timeStamp"),
                 ("ReadSimTime.outputs:simulationTime", "ur5TfPublisher.inputs:timeStamp"),
-
                 ("ReadSimTime.outputs:simulationTime", "PublishClock.inputs:timeStamp"),
             ],
-            # og.Controller.Keys.SET_VALUES: [],
         },
-        )
-    
+    )
+
     if ros_v == 2:
         controller.edit(
             graph,
@@ -104,11 +95,10 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
                     ("rosContext.outputs:context", "tfPublisher.inputs:context"),
                     ("rosContext.outputs:context", "ur5TfPublisher.inputs:context"),
                 ],
-                # og.Controller.Keys.SET_VALUES: [],
             },
         )
 
-    ##* TF Tree
+    # * TF Tree
     set_targets(
         prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/tfPublisher"),
         attribute="inputs:targetPrims",

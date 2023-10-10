@@ -9,13 +9,13 @@
     <parent link="world"/>
     <child link="base_link"/>
   </joint>
-  
+
   <link name="base_link">
   </link>
-  
+
   <link name="J1">
   </link>
-  
+
   <joint name="joint_1" type="revolute">
     <parent link="base_link"/>
     <child link="J1"/>
@@ -24,10 +24,10 @@
     <limit effort="1" lower="-4.71238898038469" upper="4.71238898038469" velocity="1"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-    
+
   <link name="J2">
   </link>
-  
+
   <joint name="joint_2" type="revolute">
     <parent link="J1"/>
     <child link="J2"/>
@@ -36,11 +36,11 @@
     <limit effort="1" lower="-2.61799387799149" upper="2.61799387799149" velocity="1"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
-  
+
+
   <link name="J3">
   </link>
-  
+
   <joint name="joint_3" type="revolute">
     <parent link="J2"/>
     <child link="J3"/>
@@ -49,12 +49,12 @@
     <limit effort="1" lower="-2.61799387799149" upper="2.61799387799149" velocity="1"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
 
-  
+
+
   <link name="J4">
   </link>
-  
+
   <joint name="joint_4" type="revolute">
     <parent link="J3"/>
     <child link="J4"/>
@@ -64,10 +64,10 @@
     <dynamics damping="0" friction="0"/>
   </joint>
 
-  
+
   <link name="J5">
   </link>
-  
+
   <joint name="joint_5" type="revolute">
     <parent link="J4"/>
     <child link="J5"/>
@@ -76,11 +76,11 @@
     <limit effort="1" lower="-2.61799387799149" upper="2.61799387799149" velocity="1"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
-  
+
+
   <link name="J6">
   </link>
-  
+
   <joint name="joint_6" type="revolute">
     <parent link="J5"/>
     <child link="J6"/>
@@ -89,30 +89,30 @@
     <limit effort="1" lower="-6.28318530717959" upper="6.28318530717959" velocity="1"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  
 
-  
+
+
   <link name="onrobot_rg6_base_link">
   </link>
-  
+
   <link name="left_outer_knuckle">
   </link>
-  
+
   <link name="left_inner_knuckle">
   </link>
-  
+
   <link name="left_inner_finger">
   </link>
-  
+
   <link name="right_outer_knuckle">
   </link>
-  
+
   <link name="right_inner_knuckle">
   </link>
-  
+
   <link name="right_inner_finger">
   </link>
-  
+
   <joint name="finger_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 -0.024112 0.136813"/>
     <parent link="onrobot_rg6_base_link"/>
@@ -120,7 +120,7 @@
     <axis xyz="-1 0 0"/>
     <limit effort="1000" lower="-0.628319" upper="0.628319" velocity="2.0"/>
   </joint>
-  
+
   <joint name="left_inner_knuckle_joint" type="revolute">
     <origin rpy="0 0 0.0" xyz="0 -0.01272 0.159500"/>
     <parent link="onrobot_rg6_base_link"/>
@@ -129,7 +129,7 @@
     <limit effort="1000" lower="-0.628319" upper="0.628319" velocity="2.0"/>
     <mimic joint="finger_joint" multiplier="-1" offset="0"/>
   </joint>
-  
+
   <joint name="left_inner_finger_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 -0.047334999999999995 0.064495"/>
     <parent link="left_outer_knuckle"/>
@@ -138,7 +138,7 @@
     <limit effort="1000" lower="-0.872665" upper="0.872665" velocity="2.0"/>
     <mimic joint="finger_joint" multiplier="1" offset="0"/>
   </joint>
-  
+
   <joint name="right_outer_knuckle_joint" type="revolute">
     <origin rpy="0 0 3.141592653589793" xyz="0 0.024112 0.136813"/>
     <parent link="onrobot_rg6_base_link"/>
@@ -147,7 +147,7 @@
     <limit effort="1000" lower="-0.628319" upper="0.628319" velocity="2.0"/>
     <mimic joint="finger_joint" multiplier="-1" offset="0"/>
   </joint>
-  
+
   <joint name="right_inner_knuckle_joint" type="revolute">
     <origin rpy="0 0 -3.141592653589793" xyz="0 0.01272 0.159500"/>
     <parent link="onrobot_rg6_base_link"/>
@@ -156,7 +156,7 @@
     <limit effort="1000" lower="-0.628319" upper="0.628319" velocity="2.0"/>
     <mimic joint="finger_joint" multiplier="-1" offset="0"/>
   </joint>
-  
+
   <joint name="right_inner_finger_joint" type="revolute">
     <origin rpy="0 0 0" xyz="0 -0.047334999999999995 0.064495"/>
     <parent link="right_outer_knuckle"/>
@@ -165,9 +165,9 @@
     <limit effort="1000" lower="-0.872665" upper="0.872665" velocity="2.0"/>
     <mimic joint="finger_joint" multiplier="1" offset="0"/>
   </joint>
-  
 
-  
+
+
   <joint name="joint_tcp_fixed" type="fixed">
     <parent link="J6"/>
     <child link="onrobot_rg6_base_link"/>

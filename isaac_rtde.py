@@ -20,32 +20,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Author: Martin Juříček 
+# Author: Martin Juříček
 
 # Isaac Sim app library
 from omni.isaac.kit import SimulationApp
 
 simulation_app = SimulationApp({"headless": False})
 
-# Isaac Sim extenstions + core libraries
-from omni.isaac.motion_generation.lula import RmpFlow
-from omni.isaac.motion_generation import ArticulationMotionPolicy
-from omni.isaac.core.robots import Robot
-from omni.isaac.core.objects import cuboid
-from omni.isaac.core import World
-from omni.isaac.core.utils.stage import add_reference_to_stage
-from omni.isaac.core.utils.nucleus import get_assets_root_path
-from omni.isaac.motion_generation.interface_config_loader import (
-    load_supported_motion_policy_config,
-)
+import argparse
+import sys
+
+import numpy as np
 
 # ur rtde communication
 import rtde_control
 import rtde_receive
+from omni.isaac.core import World
+from omni.isaac.core.objects import cuboid
+from omni.isaac.core.robots import Robot
+from omni.isaac.core.utils.nucleus import get_assets_root_path
+from omni.isaac.core.utils.stage import add_reference_to_stage
+from omni.isaac.motion_generation import ArticulationMotionPolicy
+from omni.isaac.motion_generation.interface_config_loader import (
+    load_supported_motion_policy_config,
+)
 
-import numpy as np
-import argparse
-import sys
+# Isaac Sim extenstions + core libraries
+from omni.isaac.motion_generation.lula import RmpFlow
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -78,18 +79,26 @@ rmp_config = load_supported_motion_policy_config(robot_name, "RMPflow")
 
 # Initialize an RmpFlow object and set up
 rmpflow = RmpFlow(**rmp_config)
-physics_dt = 1.0/60
+physics_dt = 1.0 / 60
 articulation_rmpflow = ArticulationMotionPolicy(robot, rmpflow, physics_dt)
 articulation_controller = robot.get_articulation_controller()
 
 # Make a target to follow
 target_cube = cuboid.VisualCuboid(
-    "/World/target", position=np.array([0.5, 0, 0.5]), color=np.array([1.0, 0, 0]), size=0.1, scale=np.array([0.5,0.5,0.5])
+    "/World/target",
+    position=np.array([0.5, 0, 0.5]),
+    color=np.array([1.0, 0, 0]),
+    size=0.1,
+    scale=np.array([0.5, 0.5, 0.5]),
 )
 
 # Make an obstacle to avoid
 ground = cuboid.VisualCuboid(
-    "/World/ground", position=np.array([0.0, 0, -0.0525]), color=np.array([0, 1.0, 0]), size=0.1, scale=np.array([40,40,1])
+    "/World/ground",
+    position=np.array([0.0, 0, -0.0525]),
+    color=np.array([0, 1.0, 0]),
+    size=0.1,
+    scale=np.array([40, 40, 1]),
 )
 rmpflow.add_obstacle(ground)
 
@@ -102,8 +111,8 @@ try:
     rtde_c = rtde_control.RTDEControlInterface(arg.robot_ip)
     robot.set_joint_positions(np.array(rtde_r.getActualQ()))
 
-except:
-    print("[ERROR] Robot is not connected")
+except Exception as e:
+    print(f"[ERROR] Robot is not connected {e}")
     # close isaac sim
     simulation_app.close()
     sys.exit()
@@ -118,16 +127,17 @@ while simulation_app.is_running():
 
         # set target to RMP Flow
         rmpflow.set_end_effector_target(
-            target_position=target_cube.get_world_pose()[0], target_orientation=target_cube.get_world_pose()[1]
+            target_position=target_cube.get_world_pose()[0],
+            target_orientation=target_cube.get_world_pose()[1],
         )
-        
+
         # Parameters
         velocity = 0.1
         acceleration = 0.1
-        dt = 1.0/500  # 2ms
+        dt = 1.0 / 500  # 2ms
         lookahead_time = 0.1
         gain = 300
-        
+
         # jointq = get joints positions
         joint_q = robot.get_joint_positions()
 
@@ -137,12 +147,12 @@ while simulation_app.is_running():
         # run servoJ
         rtde_c.servoJ(joint_q, velocity, acceleration, dt, lookahead_time, gain)
         rtde_c.waitPeriod(t_start)
-        
+
         # Query the current obstacle position
         rmpflow.update_world()
         actions = articulation_rmpflow.get_next_articulation_action()
         articulation_controller.apply_action(actions)
-        
+
         # get actual q from robot and update isaac model
         robot.set_joint_positions(np.array(rtde_r.getActualQ()))
 

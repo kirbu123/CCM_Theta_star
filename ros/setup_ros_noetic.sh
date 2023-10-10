@@ -32,7 +32,7 @@ docker run -d \
     osrf/ros:noetic-desktop-full \
     bash -c "source /opt/ros/noetic/setup.bash && roscore"
 
-# 
+#
 # Give some time for roscore to start up
 sleep 5
 
