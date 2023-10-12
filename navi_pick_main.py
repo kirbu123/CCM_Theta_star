@@ -21,8 +21,8 @@ import carb
 from omni.isaac.core import World
 from omni.isaac.core.utils import extensions
 
-from src.actions.actions import HuskyController
 from src.actions.base_server import ActionServer
+from src.actions.controller import HuskyController
 from src.actions.scenario import add_scenario_to_queue, setup_scene_for_scenario
 from src.config import get_config
 from src.scene_setup.environment import setup_scene_background

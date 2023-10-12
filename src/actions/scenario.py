@@ -98,6 +98,7 @@ def setup_scene_for_scenario(cfg: Config, world: World) -> None:
                         scale=object["scale"],
                         color=color,
                     )
+                    print("Add cube")
                 else:
                     raise NotImplementedError(f"Object type: {object['type']} is not supported for spawn yet")
 
