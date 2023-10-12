@@ -18,7 +18,7 @@ from omni.isaac.wheeled_robots.controllers.differential_controller import (
 )
 from omni.usd import get_world_transform_matrix
 
-from src.actions.servers import ActionServer
+from src.actions.base_server import ActionServer
 from src.config import Config
 from src.controllers.pick_place import PickPlaceController
 from src.sensors.cameras import setup_cameras

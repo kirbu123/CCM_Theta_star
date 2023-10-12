@@ -22,19 +22,8 @@ from omni.isaac.core import World
 from omni.isaac.core.utils import extensions
 
 from src.actions.actions import HuskyController
-
-# from src.sensors.cameras import setup_cameras
-# from src.sensors.imu import setup_imu_graph
-# from src.sensors.lidar import setup_lidar_graph
-# from src.sensors.tf import setup_tf_graph
+from src.actions.base_server import ActionServer
 from src.actions.scenario import add_scenario_to_queue
-from src.actions.servers import (
-    ActionServer,
-    MoveToActionServer,
-    OpenSeedActionServer,
-    PickupObjectActionServer,
-    PutObjectActionServer,
-)
 from src.config import get_config
 from src.scene_setup.environment import setup_scene_background
 
@@ -55,7 +44,15 @@ if cfg.ros_cfg[cfg.ros].ros_v == 1:
         exit()
 
 if cfg.mode == "online":
-    import rospy
+    from src.actions.action_servers import (
+        MoveToActionServer,
+        OpenSeedActionServer,
+        PickupObjectActionServer,
+        PutObjectActionServer,
+    )
+
+    if cfg.ros == "noetic":
+        import rospy
 
 
 my_world = World(stage_units_in_meters=1.0)

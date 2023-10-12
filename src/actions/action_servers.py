@@ -1,40 +1,34 @@
 import queue
-from typing import Union
 
-import actionlib
-import rospy
-from communication_msgs.msg import (
-    MoveToAction,
-    MoveToFeedback,
-    MoveToGoal,
-    MoveToResult,
-    OpenSeeDSetterAction,
-    OpenSeeDSetterGoal,
-    PickupObjectAction,
-    PickupObjectGoal,
-    PickupObjectResult,
-    PutObjectAction,
-    PutObjectGoal,
-    PutObjectResult,
-)
+from src.actions.base_server import ActionServer
+from src.config import get_config
 
+cfg = get_config()
 
-class ActionServer:
-    def __init__(
-        self,
-        server_name: str,
-        task_queue: Union[queue.Queue, None] = None,
-    ):
-        self.server_name = server_name
-
-    def execute(self, goal: Union[MoveToGoal, PickupObjectGoal, PutObjectGoal, OpenSeeDSetterGoal]):
+if cfg.mode == "online":
+    if cfg.ros == "noetic":
+        import actionlib
+        import rospy
+    else:
+        # Here we import ROS2 packages
+        # TODO
         pass
-
-    def put_feedback(self, feedback: Union[MoveToFeedback, None] = None):
-        pass
-
-    def put_result(self, result: Union[MoveToResult, PickupObjectResult, PutObjectResult, None] = None):
-        pass
+    # Assume that interface is the same for both ROS1 and ROS2,
+    # if not - place the imports in the if/else block
+    from communication_msgs.msg import (
+        MoveToAction,
+        MoveToFeedback,
+        MoveToGoal,
+        MoveToResult,
+        OpenSeeDSetterAction,
+        OpenSeeDSetterGoal,
+        PickupObjectAction,
+        PickupObjectGoal,
+        PickupObjectResult,
+        PutObjectAction,
+        PutObjectGoal,
+        PutObjectResult,
+    )
 
 
 class MoveToActionServer(ActionServer):
