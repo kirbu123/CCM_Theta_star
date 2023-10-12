@@ -6,6 +6,8 @@
 # general
 logging_level: "INFO" # 10 #
 
+mode: "offline" # ["online", "offline", "idle"]
+
 ros: "humble" # ["noetic", "foxy", "humble"]
 
 ros_cfg:
@@ -27,6 +29,8 @@ use_omni_background: false
 background_usd_path: "/Isaac/Environments/Simple_Warehouse/warehouse_with_forklifts.usd"
 
 #Sensors info
+
+use_sensors: true
 
 tf:
   action_graph_path: "/World/Husky_Robot/TF"
@@ -139,3 +143,8 @@ ur5_init_pose: [0, -0.5, -2, 0, 1.570, 0]
 # RTDE
 
 rtde_robot_ip: "127.0.0.1"
+
+# Scenarios
+
+scenarios_dir: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/scenarios"
+scenaio_name: "pick_and_place"

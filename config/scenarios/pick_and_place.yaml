@@ -1,0 +1,30 @@
+# Base pick and place scenario:
+#
+# Consist of 4 parts:
+# 1. Move_to (find object in env and navigate to it)
+# 2. Pick (pick object)
+# 3. Move_to (navigate to place position)
+# 4. Place (place object)
+#
+# Emulates following test command for behaviour tree:
+# msg.tasks = [Task(type="MOVE_TO", object="blue_cube", location="unspecified"),
+#              Task(type="PICK_UP", object="blue_cube", location="unspecified"),
+#              Task(type="MOVE_TO", object="unspecified", location="green_box"),
+#              Task(type="PUT", object="blue_cube", location="green_box")]
+
+scenario:
+  - type: MOVE_TO
+    object: blue_cube
+    location: unspecified
+
+  - type: PICK_UP
+    object: blue_cube
+    location: unspecified
+
+  - type: MOVE_TO
+    object: unspecified
+    location: green_box
+
+  - type: PUT
+    object: blue_cube
+    location: green_box
