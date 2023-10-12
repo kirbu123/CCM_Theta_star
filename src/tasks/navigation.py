@@ -8,7 +8,6 @@
 #
 
 from omni.isaac.core.tasks import BaseTask
-import numpy as np
 
 
 # Inheriting from the base class Follow Target
