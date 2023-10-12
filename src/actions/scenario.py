@@ -79,28 +79,27 @@ def setup_scene_for_scenario(cfg: Config, world: World) -> None:
     with open(str(path), "r") as file:
         try:
             data = yaml.safe_load(file)
-            env_cfg = data.get("environment", {})
-            if env_cfg["fixed"]:
-                print("Environment is fixed, nothing to do.")
-                return
-
-            objects = env_cfg["objects"]
-            for object in objects:
-                if object["type"] == "cube":
-                    if not object["has_texture"]:
-                        color = object["color"]
-                    else:
-                        color = None
-                    add_cube(
-                        world=world,
-                        name=object["name"],
-                        position=object["position"],
-                        scale=object["scale"],
-                        color=color,
-                    )
-                    print("Add cube")
-                else:
-                    raise NotImplementedError(f"Object type: {object['type']} is not supported for spawn yet")
-
         except yaml.YAMLError as e:
             print(f"Error reading YAML file: {e}")
+        env_cfg = data.get("environment", {})
+        if env_cfg["fixed"]:
+            print("Environment is fixed, nothing to do.")
+            return
+
+        objects = env_cfg["objects"]
+        for object in objects:
+            if object["type"] == "cube":
+                if not object["has_texture"]:
+                    color = object["color"]
+                else:
+                    color = None
+                add_cube(
+                    world=world,
+                    name=object["name"],
+                    position=object["position"],
+                    scale=object["scale"],
+                    color=color,
+                )
+                print("Add cube")
+            else:
+                raise NotImplementedError(f"Object type: {object['type']} is not supported for spawn yet")
