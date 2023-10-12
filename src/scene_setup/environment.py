@@ -24,4 +24,6 @@ def setup_scene_background(simulation_app: SimulationApp, cfg: Config):
         else:
             stage.add_reference_to_stage(cfg.background_usd_path, cfg.background_stage_path)
     else:
-        stage.add_reference_to_stage(assets_root_path + "/Isaac/Environments/Grid/default_environment.usd")
+        stage.add_reference_to_stage(
+            assets_root_path + "/Isaac/Environments/Grid/default_environment.usd", cfg.background_stage_path
+        )

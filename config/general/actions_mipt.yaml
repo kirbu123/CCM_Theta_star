@@ -118,7 +118,7 @@ husky_minimal_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-hu
 # husky_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky_with_sensors.usd"
 husky_usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/husky/husky_with_sensors.usd"
 husky_stage_path: "/World/Husky_Robot"
-husky_init_pose: [17.13, 2.58, 0.02] # [12.0, 0.07, 0.15]
+husky_init_pose: [0.0, 0.0, 0.0] # [17.13, 2.58, 0.02] # [12.0, 0.07, 0.15]
 
 wheel_radius: 0.3
 wheel_base: 0.5
@@ -147,4 +147,4 @@ rtde_robot_ip: "127.0.0.1"
 # Scenarios
 
 scenarios_dir: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/config/scenarios"
-scenaio_name: "pick_and_place"
+scenario_name: "pick_and_place"

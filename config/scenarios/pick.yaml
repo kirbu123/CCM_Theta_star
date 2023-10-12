@@ -1,16 +1,15 @@
-# Base pick and place scenario:
+# Base pick scenario:
 #
 # Consist of 4 parts:
 # 1. Move_to (find object in env and navigate to it)
 # 2. Pick (pick object)
-# 3. Move_to (navigate to place position)
-# 4. Place (place object)
 #
 # Emulates following test command for behaviour tree:
 # msg.tasks = [Task(type="MOVE_TO", object="blue_cube", location="unspecified"),
 #              Task(type="PICK_UP", object="blue_cube", location="unspecified"),
-#              Task(type="MOVE_TO", object="unspecified", location="green_box"),
-#              Task(type="PUT", object="blue_cube", location="green_box")]
+#
+
+assets_path: exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets &assets_path
 
 scenario:
   - type: MOVE_TO
@@ -21,34 +20,17 @@ scenario:
     object: blue_cube
     location: unspecified
 
-  - type: MOVE_TO
-    object: unspecified
-    location: green_box
-
-  - type: PUT
-    object: blue_cube
-    location: green_box
-
 # Minimal setup for this scenario:
 environment:
   # if fixed == true, assume that environment is already set up
   # otherwise, objects will be spawned from the list below
-  fixed: true
+  fixed: false
   objects:
     - type: cube
       name: blue_cube
       has_texture: false
       color: [0, 0, 1]
-      position: [2, 0.5, 0.00575]
+      position: [2, 0.5, 0.02575]
       orientation: [0, 0, 0, 1]
       scale: [0.0515, 0.0515, 0.0515]
       usd_path: ""
-
-    - type: box
-      name: green_box
-      has_texture: false
-      color: [0, 1, 0]
-      position: [2, 2.5, 0.02575]
-      orientation: [0, 0, 0, 1]
-      scale: [1., 1., 1.]
-      usd_path: "exts/omni.isaac.examples/omni/isaac/examples/virtual-husky/assets/objects/trash_can/can.usd"

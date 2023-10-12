@@ -12,6 +12,7 @@ if cfg.mode == "online":
     else:
         # Here we import ROS2 packages
         # TODO
+        raise NotImplementedError("ROS2 Actions is not implemented yet")
         pass
     # Assume that interface is the same for both ROS1 and ROS2,
     # if not - place the imports in the if/else block
