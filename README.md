@@ -31,6 +31,7 @@
 
 - [Isaac Sim](https://docs.omniverse.nvidia.com/isaacsim/latest/install_workstation.html)
 - [ROS2-Humble](https://docs.ros.org/en/humble/Installation.html)
+- **или** [ROS-Noetic](https://wiki.ros.org/noetic/Installation)
 - [DVC](https://dvc.org/doc/install)
 
 ### Isaac Sim Installation
@@ -65,19 +66,33 @@
     практике если ваш компьютер не соответствует "оптимальным" требованиям, то такой функционал будет работать
     очень медленно.
 
-### ROS2 Humble Installation
+### ROS Installation
 
-В целом критичным является именно ROS2, и скорее всего с Foxy также будет работать, но конечная цель все равно
-Humble и рекомендуется использовать именно его.
+Конкретные версии (Noetic, Humble) - не принцпипиальны, но а) Это последние под-версии соответствующих версий
+ROS; б) С ними точно работает, с другими не проверяли. Поэто рекомендуется использовать именно их.
 
-Для установки - следуем [официальной документации](https://docs.ros.org/en/humble/Installation.html).
+Для установки - следуем официальной документации [ROS](https://wiki.ros.org/noetic/Installation) или
+[ROS 2](https://docs.ros.org/en/humble/Installation.html).
 
-Если у вас Ubuntu 20.04 - возможно, проще использовать Docker контейнер, так как без него придётся
-[собирать Humble из исходников](https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html).
+**Notes:**
 
-Также **(только для ROS2)** для корректной работы публикации топиков (точнее интерфейса, который её
-обеспечивает), нужен специальный конфиг. Это конфиг лежит в
-[/config/ros2/fastdds.xml](/config/ros2/fastdds.xml).
+- ROS Noetic - официально не поддерживается для Ubuntu 22.04 (но если очень хочется, можно
+  [собрать из исходников](https://www.reddit.com/r/ROS/comments/158icpy/compiling_ros1_noetic_from_source_on_ubuntu_2204/)
+  и что-то даже будет работать, но не все пакеты доступны и тд и тп)
+
+- ROS 2 Humble - существует только в beta-версии для Ubuntu 20.04, его тоже можно
+  [собрать из исходников](https://docs.ros.org/en/humble/Installation/Alternatives/Ubuntu-Development-Setup.html),
+  но не проверяли.
+
+- В связи с этим, если если у вас Ubuntu 20.04 - возможно, проще использовать ROS1 или ROS2 через
+  Docker-контейнер.
+
+- То же самое но в обратную сторону для Ubuntu 22.04 - лучше использовать ROS2, или ROS1 через
+  Docker-контейнер.
+
+- Также **(только для ROS2)** для корректной работы публикации топиков (точнее интерфейса, который её
+  обеспечивает), нужен специальный конфиг. Это конфиг лежит в
+  [/config/ros2/fastdds.xml](/config/ros2/fastdds.xml).
 
 ```bash
 # копируем конфиг в директорию ROS
@@ -107,6 +122,12 @@ export AWS_ACCESS_KEY_ID=jvn4b7kof64vmlbur7i3ahx6wblq
 Как работать с DVC описано в разделе [Data (and dvc)](#data-and-dvc), но чтение
 [официального гайда](https://dvc.org/doc/start/data-and-model-versioning) также приветствуется.
 
+**Note:** Если вы устанавливаете dvc через pip, то для работы с S3 потребуется дополнительный пакет `dvc-s3`:
+
+```bash
+pip install dvc-s3
+```
+
 ## Structure
 
 Структура репозитория:
@@ -114,10 +135,30 @@ export AWS_ACCESS_KEY_ID=jvn4b7kof64vmlbur7i3ahx6wblq
 ```bash
 virtual-husky
 ├── assets
-│   └── husky
-│       ├── ####.usd
-│       ├── ####.usd
-│       └── ####.usd
+│   ├── husky
+│   │   ├── ####.usd
+│   └── objects
+│       ├── chair
+│       │   ├── ####.usd
+│       │   ├── chair.dae
+│       │   ├── chair.stl
+│       │   ├── ####.urdf
+│       │   └── Image.002.jpg
+│       ├── cup
+│       │   ├── cup.stl
+│       │   ├── ####.urdf
+│       │   └── ####.usd
+│       ├── table
+│       │   ├── Image.003.jpg
+│       │   ├── table.dae
+│       │   ├── table.stl
+│       │   └── ####.usd
+│       ├── toy_cat
+│       │   ├── Image.jpg
+│       │   ├── toy_cat.dae
+│       │   ├── toy_cat.stl
+│       └── trash_can
+│           └── ####.usd
 ├── assets.dvc
 ├── config
 │   ├── general
@@ -125,32 +166,54 @@ virtual-husky
 │   │   ├── ####.yaml
 │   │   └── README.md
 │   ├── LiDAR
-│   │   ├── Example_Rotary.json
-│   │   └── VLP_16.json
-│   └── ros2
-│       ├── fastdds.xml
-│       └── mipt_env_rviz2_cfg.rviz
-├── gripper_control.py
+│   │   ├── ####.json
+│   │   └── ####.json
+│   ├── ros2
+│   │   └── fastdds.xml
+│   └── scenarios
+│       ├── ####.yaml
+│       └── ####.yaml
 ├── img
 │   └── husky_code_u.png
-├── navi_pick_cams.py
-├── navi_pick.py
+├── navi_pick_main.py
 ├── README.md
+├── ros
+│   ├── ros_ws
+│   │   └── src
+│   │       ├── CMakeLists.txt -> /opt/ros/noetic/share/catkin/cmake/toplevel.cmake
+│   │       └── communication_msgs
+│   │           ├── action
+│   │           │   ├── ####.action
+│   │           │   └── ####.action
+│   │           ├── CMakeLists.txt
+│   │           ├── msg
+│   │           │   ├── ####.msg
+│   │           │   └── ####.msg
+│   │           └── package.xml
+│   └── setup_ros_noetic.sh
 └── src
+    ├── actions
+    │   ├── action_servers.py
+    │   ├── base_server.py
+    │   ├── communication_msgs.py
+    │   ├── controller.py
+    │   └── scenario.py
     ├── config.py
     ├── controllers
+    │   ├── __init__.py
     │   ├── interface_helper.py
     │   ├── kinematics.py
     │   ├── motion_policy_interface.py
+    │   ├── pick_place_controller.py
     │   ├── pick_place.py
     │   └── rmpflow.py
     ├── rmpflow
-    │   ├── ####.urdf
-    │   ├── ####.yaml
     │   ├── ####.yaml
     │   ├── ####.urdf
-    │   ├── ####.usd
     │   └── ####.usd
+    ├── scene_setup
+    │   ├── environment.py
+    │   └── objects.py
     ├── sensors
     │   ├── cameras.py
     │   ├── imu.py
@@ -168,21 +231,22 @@ virtual-husky
   usd. Для экономии места используется бинарный формат usd, и эта директория версионируется с помощью dvc, а
   не git.
 
-- `config` - папка с конфигурационными файлами сценариев в целом и отдельных сенсоров.
+- `config` - директория с конфигурационными файлами пайплайна в целом и отдельных сенсоров, сценариев.
 
-- `navi_pick.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, без сенсоров).
+- `navi_pick_main.py` - единая точка входа, для запуска различных сценариев навигации и захвата цели.
 
-- `navi_pick_cams.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде "склад", c
-  сенсорами и публикацией в ROS).
+- `src/{controllers,rmpflow,tasks}` - содержат базовые скрипты отвечающие за управление и кинематику робота,
+  пока более детально только в документации.
 
-- `src/{controllers,rmpflow,tasks}` - содержат скрипты отвечающие за управление и кинематику робота, пока
-  более детально только в документации.
+- `src/actions` - сожержит верхнеуровневые скрипты, для запуска сценариев навигации и захвата цели. В том
+  числе инициализацию класса-контроллера для робота в целом.
 
 - `src/sensors` - содержит скрипты для настройки сенсоров и публикации данных в ROS2.
 
-- `navi_pick.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, без сенсоров).
+- `src/scene_setup` - содержит скрипты для настройки сцены (размещение объектов, подгрузка background среды и
+  тд).
 
-- `navi_pick_cams.py` - скрипт для запуска сценария навигации и захвата цели (в демо-среде, c сенсорами).
+- `ros` - содержит скрипт для запуска ros1 в докер, а также пакет с сообщениями для Action Server -ов.
 
 ## Quickstart
 
@@ -204,11 +268,16 @@ _SubNote:_ extension_examles - просто ссылка на директори
 - Скрипты запускаются не просто через `python`, a из корневой директории симулятора, через
   `./python.sh <path_to_script.py>`. Это необходимо для корректной работы импорта модулей Isaac Sim.
 
-- Если у вас установлен ROS2/ROS его **не надо включать (source ...)** в терминале, который используется для
+  - _Есть опция запуска внутри conda env просто командой python, но об этом позже_
+
+- Для QuickStart не будем заморачиваться с ROS - просто запустим элементарный сценарий, без сенсоров и
+публикации чего-либо в топики.
+<!-- - Если у вас установлен ROS2/ROS его **не надо включать (source ...)** в терминале, который используется для
   запуска скриптов. Это приведет к конфликтам переменных среды.
 
+
 - Для корректной работы с ROS(2) также необходимо настроить переменные среды, подробнее в разделе
-  [Работа с ROS2](#работа-с-ros2).
+  [Работа с ROS2](#работа-с-ros2). -->
 
 ```bash
 # Переходим в корневую директорию симулятора и далее в `extension_examples`
@@ -230,14 +299,19 @@ dvc pull
 cd ../..
 
 # Запускаем скрипт
-./python.sh extension_examples/virtual-husky/navi_pick.py
+./python.sh extension_examples/virtual-husky/navi_pick_main.py
 
 # Ждём пока скрипт загрузится и начнёт выполняться, это может занять время (до 5-7 минут)
+
+# Робот появляется и едет поднимать синий кубик, это может у него не получиться - это нормально.
+# Синих кубика сейчас 2 - один лишний, но откуда он там берется пока не понятно :)
 
 # Для остановки скрипта нажимаем Ctrl+C
 ```
 
 ## Pre-setup for Scenarios
+
+Для не QuickStart сценариев, необходимо сделать некоторые приготовления.
 
 ### LiDAR for Husky
 
@@ -253,39 +327,71 @@ cp config/LiDAR/VLP_16.json <path/to/isaac_root_dir>/isaac_sim-2022.2.1/exts/omn
 На данный момент используется бесплатная версия S3 хранилища, а файл среды весит ~$900$ Mb, и пока хранится на
 яндекс диске.
 
-Для запуска сценариев в среде МФТИ - скачать [файл](https://disk.yandex.ru/d/0FIz_1jElgpq1w) и разместить там,
-где будет удобно.
+Для запуска сценариев в среде МФТИ - скачать [архив](https://disk.yandex.ru/d/5kbo5Linwc1fHw), распаковать и
+разместить там, где будет удобно.
 
-## Usage scenarios
+Внутри архив выглядит так:
+
+```bash
+mipt_env3
+├── mipt_env_3f.usd
+└── textures
+    ├── chair.jpg
+    ├── mipt_env_small_simple.png
+    ├── table.jpg
+    └── toy_cat.jpg
+```
+
+Путь нужно указывать к файлу `mipt_env_3f.usd`. Также его можно открыть просто в графическом интерфейсе
+IsaacSim.
+
+**Note:** usd файл **не** самодостаточный - пути к текстурам фотореалистичных объектов прописаны
+относительные, поэтому очень рекомендуется перемещать только всю распакованную директорию целиком, чтобы
+текстуры не терялись.
+
+## Usage patterns
 
 ### Super Plain Demo
 
 По сути - описан в [QuickStart](#quickstart) - сценарий без среды, просто робот подъезжает к кубику и пробует
-поднять его и переложить на другое место.
+поднять его.
 
-### Demo with sensors and ROS2 publishing
+### Pre-setted cases
 
-Здесь тот же сценарий, что и первый, но здесь робот движется в среде (Warehouse - одна из готовых сред
-IsaccSim), а также публикует данные в ROS2 (в связи с чем требует чуть больше настройки и за счет загрузки
-среды сам симулятор грузится дольше).
+#### Offline demo with sensors and ROS1/2 publishing in MIPT env
 
-_Note:_ Требует выполненного pre-setup шага для лидара: [#LiDAR for Husky](#lidar-for-husky)
+Это один из 2х основных вариантов работы пайплайна. Здесь робот движется в фотореалистичной среде изображающей
+часть 5го этажа МФТИ, а также публикует данные в ROS1/2 (в связи с чем требует чуть больше настройки и за счет
+загрузки среды сам симулятор грузится дольше).
 
-В остальном не отличается QuickStart:
+_Слово `offline` - антипод к `online` - третьему варианту - подразумевает, что этот вариант не требует
+взаимодействия с behaviour_tree и позволяет отрабатывать алгоритмы независимо от остальной части пайплайна. В
+остальном логика работы максимально приближена к `online` варианту_
+
+**Note:** Требует выполненных pre-setup шагов:
+
+- Для лидара[#LiDAR for Husky](#lidar-for-husky)
+- Загруженной фотореалистичной среды: [#MIPT env](#mipt-env)
+- И настроенного ROS - 1 или 2: [#Работа с ROS](#работа-с-ros), [#Работа с ROS2](#работа-с-ros2)
+
+В остальном почти не отличается QuickStart:
 
 ```bash
 # Переходим в директорию с репозиторием
 cd virtual-husky
 
-# Подтягиваем данные
+# Подтягиваем данные (если не сделали это ранее)
 git pull
 dvc pull
 
 # Выходим обратно в корневую директорию симулятора
 cd ../..
 
-# Запускаем скрипт
-./python.sh extension_examples/virtual-husky/navi_pick.py
+# Запускаем скрипт, но уже с аргументами
+./python.sh extension_examples/virtual-husky/navi_pick_main.py --config_name offline_mipt --background_usd_path=<path-to-MIPT-env>
+
+# По умолчанию скрипт запускается с ROS2, для ROS1 нужно передать аргумент --ros noetic
+# ./python.sh extension_examples/virtual-husky/navi_pick_main.py --config_name offline_mipt --background_usd_path=<path-to-MIPT-env> --ros noetic
 
 # Ждём пока скрипт загрузится и начнёт выполняться, это может занять время (до 5-7 минут)
 
@@ -294,22 +400,44 @@ cd ../..
 
 Для просмотра публикуемых топиков:
 
+_(Всех кроме IMU, для него нет метода визуализации в rviz)_
+
+**ROS1**
+
+```bash
+# В отдельном терминале
+source /opt/ros/noetic/setup.bash
+
+rviz
+```
+
+**ROS2**
+
 ```bash
 # В отдельном терминале
 source /opt/ros/humble/setup.bash
 
-rviz2 -d config/ros2/mipt_env_rviz2_cfg.rviz
+rviz2
 ```
 
-(Всех кроме IMU, для него нет метода визуализации в rviz)
+#### Online demo with sensors and ROS1 publishing in MIPT env
 
-### Demo with sensors and ROS2 publishing in MIPT env
+"Release" вариант работы пайплайна, предполагает что команды для робота поступают от
+[behaviour_tree](https://git.sberrobots.ru/mipt.navigation/interaction/strategic_node), и соответсвтенно
+требует наличия запущенного behaviour_tree. Сетап сенсоров и среды - такой же как и в offline варианте.
 
-Уже более сложный и долгий сценарий, работает совсем не идеально (робот цепляет стены из-за чего едет
-супер-медленно), на данный момент в стадии доработки, но как-то работает.
+**!Вариант особенный во всех отношениях, внимательно прочитайте шаги ниже.**
 
-_Note:_ Требует выполненных обоих pre-setup шагов: [#Pre-setup for Scenarios](#pre-setup-for-scenarios). И
-вспомнить куда вы скачали файл среды (`path-to-MIPT-env`).
+**Note:** Также как и offline требует:
+
+- Выполненных обоих pre-setup шагов: [#Pre-setup for Scenarios](#pre-setup-for-scenarios).
+- Вспомнить куда вы скачали файл среды (`path-to-MIPT-env`).
+- И настроенный **для online ROS1** - [#Работа с ROS](#работа-с-ros)
+
+**Note 2: ROS2 на данный момент НЕ поддерживается** (как собственно и в behaviour_tree), противоречия нет, это
+пока просто не реализовано.
+
+````bash
 
 Также здесь уже передаем некоторые аргументы:
 
@@ -324,22 +452,39 @@ dvc pull
 # Выходим обратно в корневую директорию симулятора
 cd ../..
 
+# Подготовка среды для online варианта, пропустите если вы читаете комментарии
+echo "Я подготовил среду как написано в README, а не просто копирую команды не глядя" && wrong_commang
+
 # Запускаем скрипт
-./python.sh extension_examples/virtual-husky/navi_pick_cams.py --config_name default_mipt --background_usd_path=<path-to-MIPT-env>
+python extension_examples/virtual-husky/navi_pick_main.py --config_name online_mipt --background_usd_path=<path-to-MIPT-env>
 
 # Ждём пока скрипт загрузится и начнёт выполняться, это может занять время (до 5-7 минут)
 
 # Для остановки скрипта нажимаем Ctrl+C
-```
+````
 
 Для просмотра публикуемых топиков:
 
+_(Всех кроме IMU, для него нет метода визуализации в rviz)_
+
+**ROS1**
+
 ```bash
 # В отдельном терминале
-source /opt/ros/humble/setup.bash
+source /opt/ros/noetic/setup.bash
 
-rviz2 -d config/ros2/mipt_env_rviz2_cfg.rviz
+rviz
 ```
+
+**ROS2**
+
+Не поддерживается.
+
+### Simple customization
+
+### Advanced customization
+
+См. раздел [Configuration](#configuration).
 
 ## Работа с ROS
 
@@ -348,8 +493,73 @@ rviz2 -d config/ros2/mipt_env_rviz2_cfg.rviz
 
 ### Работа с ROS
 
-To be filled, пока можно смотреть
-[документацию](https://docs.omniverse.nvidia.com/isaacsim/latest/install_ros.html#isaac-sim-app-install-ros).
+_Предполагается, что установка ROS уже выполнена_
+
+#### Offline mode
+
+Для публикации данных сенсоров в ROS1 необходимы 3 пункта:
+
+1. Запущенный `roscore` (где угодно на вашем устройстве)
+2. В окне терминала, где будете запускать скрипты - выполнить `source /opt/ros/noetic/setup.bash`
+3. Убедиться что в конфиге скрипта указана правильная версия ROS `ros: noetic`, также её можно передать в
+   аргументах запуска скрипта `--ros noetic` (см примеры выше)
+
+#### Online mode
+
+Для работы с ActionServer -ами и взаимодействия с behaviour_tree нам не хватит запуска скрипта через
+`./python.sh` и придётся заводить отдельную среду conda, а также, естественно, собрать ROS package для
+сообщений (ActionMessages).
+
+Если вы уже делали шаги 1 и 2 - переходите сразу к 3. **1. Собираем ROS package для сообщейний**
+
+**Note:** Сообщения прописанные в этом пакете - написаны опираясь на
+[этот](https://git.sberrobots.ru/mipt.navigation/interaction/communication_msgs/-/tree/665f8d6d3aa856f04c62ff4ee3535702dc10794b)
+коммит, в репозитории communication_msgs. Перед сборкой - убедитесь, что
+[behaviour_tree](https://git.sberrobots.ru/mipt.navigation/interaction/strategic_node) использует те же
+сообщения что и вы.
+
+```bash
+# Переходим в директорию с репозиторием
+cd virtual-husky
+
+# Переходим в ros_ws
+cd ros/ros_ws
+
+# Активируем ROS1 (если нет)
+source /opt/ros/noetic/setup.bash
+
+# Собираем package
+catkin_make
+```
+
+**2. Создаём conda env**
+
+```bash
+conda create -n isaac_sim python=3.7
+```
+
+**3. Подготавливаем среду**
+
+```bash
+# Переходим в корневую директорию симулятора
+cd /home/<USER>/.local/share/ov/pkg/isaac_sim-2022.2.1
+
+# Активируем ROS1 (если нет)
+source /opt/ros/noetic/setup.bash
+
+# Активируем собранные сообщения
+source extension_examples/virtual-husky/ros/ros_ws/devel/setup.bash
+
+# Активируем conda env
+conda activate isaac_sim
+
+# Подготавливаем среду
+source setup_conda_env.sh
+```
+
+Теперь можно запускать скрипты в режиме "online" и уже просто через `python` (не через `./python.sh`).
+
+**Note:** Запуск `roscore` все ещё необходим, как и для offline режима.
 
 ### Работа с ROS2
 
