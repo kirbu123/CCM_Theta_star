@@ -1,9 +1,0 @@
-<launch>
-    <arg name="id" default="0" />
-
-    <node name="square_number_client" pkg="my_action_package" type="square_number_client.py" output="screen">
-        <param name="id" value="$(arg id)" />
-    </node>
-    <!-- <node name="square_number_client_2" pkg="my_action_package" type="square_number_client.py" output="screen" args="$(arg id)"/> -->
-    <!-- <node name="square_number_client_3" pkg="my_action_package" type="square_number_client.py" output="screen" args="$(arg id)" /> -->
-</launch>
