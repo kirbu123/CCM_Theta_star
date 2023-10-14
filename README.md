@@ -8,42 +8,42 @@
 
 ## Table of Contents
 
-- [Table of Contents](#TableofContents)
-- [Pre-requisites or Dependencies](#Pre-requisitesorDependencies)
-  - [Isaac Sim Installation](#IsaacSimInstallation)
-  - [ROS Installation](#ROSInstallation)
-  - [DVC Installation and Setup](#DVCInstallationandSetup)
-- [Structure](#Structure)
-- [Quickstart](#Quickstart)
-- [Pre-setup for Scenarios](#Pre-setupforScenarios)
-  - [LiDAR for Husky](#LiDARforHusky)
-  - [MIPT env](#MIPTenv)
-- [Usage patterns](#Usagepatterns)
-  - [Super Plain Demo](#SuperPlainDemo)
-  - [Pre-setted cases](#Pre-settedcases)
-    - [Offline demo with sensors and ROS1/2 publishing in MIPT env](#OfflinedemowithsensorsandROS12publishinginMIPTenv)
-    - [Online demo with sensors and ROS1 publishing in MIPT env](#OnlinedemowithsensorsandROS1publishinginMIPTenv)
-  - [Simple customization](#Simplecustomization)
-  - [Advanced customization](#Advancedcustomization)
-- [Работа с ROS](#ROS)
-  - [Работа с ROS](#ROS-1)
-    - [Offline mode](#Offlinemode)
-    - [Online mode](#Onlinemode)
-  - [Работа с ROS2](#ROS2)
-- [Configuration](#Configuration)
-  - [Configuration files](#Configurationfiles)
-  - [Own config files](#Ownconfigfiles)
-  - [Command line arguments](#Commandlinearguments)
-- [Data (and dvc)](#Dataanddvc)
-  - [3D модель робота](#D)
-  - [3D модель среды](#D-1)
-  - [DVC 'на пальцах'](#DVC)
-  - [Работа с DVC](#DVC-1)
-- [Code quality and CI](#CodequalityandCI)
-  - [Code quality](#Codequality)
-  - [CI](#CI)
-- [Known issues](#Knownissues)
-- [TODO](#TODO
+- [Table of Contents](#table-of-contents)
+- [Pre-requisites or Dependencies](#pre-requisites-or-dependencies)
+  - [Isaac Sim Installation](#isaac-sim-installation)
+  - [ROS Installation](#ros-installation)
+  - [DVC Installation and Setup](#dvc-installation-and-setup)
+- [Structure](#structure)
+- [Quickstart](#quickstart)
+- [Pre-setup for Scenarios](#pre-setup-for-scenarios)
+  - [LiDAR for Husky](#lidar-for-husky)
+  - [MIPT env](#mipt-env)
+- [Usage patterns](#usage-patterns)
+  - [Super Plain Demo](#super-plain-demo)
+  - [Pre-setted cases](#pre-setted-cases)
+    - [Offline pipeline](#offline-pipeline)
+    - [Online pipeline](#online-pipeline)
+  - [Simple customization](#simple-customization)
+  - [Advanced customization](#advanced-customization)
+- [Работа с ROS](#работа-с-ros)
+  - [Работа с ROS1](#работа-с-ros1)
+    - [Offline mode](#offline-mode)
+    - [Online mode](#online-mode)
+  - [Работа с ROS2](#работа-с-ros2)
+- [Configuration](#configuration)
+  - [Configuration files](#configuration-files)
+  - [Own config files](#own-config-files)
+  - [Command line arguments](#command-line-arguments)
+- [Data (and dvc)](#data-and-dvc)
+  - [3D модель робота](#3d-модель-робота)
+  - [3D модель среды](#3d-модель-среды)
+  - [DVC 'на пальцах'](#dvc-на-пальцах)
+  - [Работа с DVC](#работа-с-dvc)
+- [Code quality and CI](#code-quality-and-ci)
+  - [Code quality](#code-quality)
+  - [CI](#ci)
+- [Known issues](#known-issues)
+- [TODO](#todo)
 
 ## Pre-requisites or Dependencies
 
@@ -376,7 +376,7 @@ IsaacSim.
 
 ### Pre-setted cases
 
-#### Offline demo with sensors and ROS1/2 publishing in MIPT env
+#### Offline pipeline
 
 Это один из 2х основных вариантов работы пайплайна. Здесь робот движется в фотореалистичной среде изображающей
 часть 5го этажа МФТИ, а также публикует данные в ROS1/2 (в связи с чем требует чуть больше настройки и за счет
@@ -438,7 +438,7 @@ source /opt/ros/humble/setup.bash
 rviz2
 ```
 
-#### Online demo with sensors and ROS1 publishing in MIPT env
+#### Online pipeline
 
 "Release" вариант работы пайплайна, предполагает что команды для робота поступают от
 [behaviour_tree](https://git.sberrobots.ru/mipt.navigation/interaction/strategic_node), и соответсвтенно
@@ -540,7 +540,7 @@ rviz
 Работа с ROS и ROS2 существенно отличается в плане настройки рабочего окружения и незначительно отличается при
 работе с.
 
-### Работа с ROS
+### Работа с ROS1
 
 _Предполагается, что установка ROS уже выполнена_
 
