@@ -595,9 +595,6 @@ catkin_make
 # catkin_make
 ```
 
-````
-
-
 **3. Подготавливаем среду**
 
 ```bash
@@ -615,7 +612,7 @@ conda activate isaac_sim
 
 # Подготавливаем среду
 source setup_conda_env.sh
-````
+```
 
 Теперь можно запускать скрипты в режиме "online" и уже просто через `python` (не через `./python.sh`).
 
