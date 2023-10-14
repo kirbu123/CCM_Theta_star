@@ -545,13 +545,23 @@ _Предполагается, что установка ROS уже выполн
 `./python.sh` и придётся заводить отдельную среду conda, а также, естественно, собрать ROS package для
 сообщений (ActionMessages).
 
-Если вы уже делали шаги 1 и 2 - переходите сразу к 3. **1. Собираем ROS package для сообщейний**
+Если вы уже делали шаги 1 и 2 - переходите сразу к 3.
 
-**Note:** Сообщения прописанные в этом пакете - написаны опираясь на
+**1. Создаём conda env**
+
+Именно conda, не virtualenv, тк в документации Isaac указана именно conda.
+
+```bash
+conda create -n isaac_sim python=3.7
+```
+
+**2. Собираем ROS package для сообщейний**
+
+**Note:** Сообщения в этом пакете - подключены как git submodule на
 [этот](https://git.sberrobots.ru/mipt.navigation/interaction/communication_msgs/-/tree/665f8d6d3aa856f04c62ff4ee3535702dc10794b)
 коммит, в репозитории communication_msgs. Перед сборкой - убедитесь, что
 [behaviour_tree](https://git.sberrobots.ru/mipt.navigation/interaction/strategic_node) использует те же
-сообщения что и вы.
+сообщения что и вы. (Не обязательно тот же коммит, но тот же формат)
 
 ```bash
 # Переходим в директорию с репозиторием
@@ -563,15 +573,30 @@ cd ros/ros_ws
 # Активируем ROS1 (если нет)
 source /opt/ros/noetic/setup.bash
 
+# Активируем conda env
+conda activate isaac_sim
+
+# Настраиваем зависимости
+pip uninstall -y em
+pip install -y empy
+pip install -y pyparsing
+
+# Подтягиваем submodule
+git submodule update --init --recursive
+
 # Собираем package
 catkin_make
+
+# Появятся директории build и devel, в последней лежит скрипт для активации сообщений
+
+# Если вы захотите обновить код пакета/сообщейни и пересобрать пакет -
+# Сначала удаляем build и devel, потом пересобрать
+# rm -rf build devel
+# catkin_make
 ```
 
-**2. Создаём conda env**
+````
 
-```bash
-conda create -n isaac_sim python=3.7
-```
 
 **3. Подготавливаем среду**
 
@@ -590,7 +615,7 @@ conda activate isaac_sim
 
 # Подготавливаем среду
 source setup_conda_env.sh
-```
+````
 
 Теперь можно запускать скрипты в режиме "online" и уже просто через `python` (не через `./python.sh`).
 
