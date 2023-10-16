@@ -1,13 +1,30 @@
 import numpy as np
-from communication_msgs.msg import (
-    MoveToFeedback,
-    MoveToGoal,
-    MoveToResult,
-    PickupObjectGoal,
-    PickupObjectResult,
-    PutObjectGoal,
-    PutObjectResult,
-)
+
+from src.config import get_config
+
+cfg = get_config()
+
+if cfg.mode == "online":
+    from communication_msgs.msg import (
+        MoveToFeedback,
+        MoveToGoal,
+        MoveToResult,
+        PickupObjectGoal,
+        PickupObjectResult,
+        PutObjectGoal,
+        PutObjectResult,
+    )
+else:
+    from src.actions.communication_msgs import (
+        MoveToFeedback,
+        MoveToGoal,
+        MoveToResult,
+        PickupObjectGoal,
+        PickupObjectResult,
+        PutObjectGoal,
+        PutObjectResult,
+    )
+
 from omni.isaac.core import World
 from omni.isaac.core.utils.rotations import euler_angles_to_quat
 from omni.isaac.core.utils.stage import get_current_stage
