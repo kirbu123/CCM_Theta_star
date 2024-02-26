@@ -1,0 +1,6 @@
+<launch>
+    <!-- Start all help nodes-->
+    <node pkg="rtabmap_fix" type="frame_creator.py" name="frame" output="screen"/>
+    <node pkg="rtabmap_fix" type="map_pub.py" name="map" output="screen"/>
+    <node pkg="rtabmap_fix" type="odometry_pub.py" name="odometry" output="screen"/>
+</launch>

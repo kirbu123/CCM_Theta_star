@@ -1,0 +1,8 @@
+prefix=/home/vitaly/rtabmap_helper_ws/devel
+
+Name: rtabmap_fix
+Description: Description of rtabmap_fix
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

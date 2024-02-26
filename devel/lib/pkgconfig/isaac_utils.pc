@@ -1,0 +1,8 @@
+prefix=/home/vitaly/rtabmap_helper_ws/devel
+
+Name: isaac_utils
+Description: Description of isaac_utils
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

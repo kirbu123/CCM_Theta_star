@@ -1,0 +1,2 @@
+isaac_utils:ros_numpy:rtabmap_fix
+-DCATKIN_DEVEL_PREFIX=/home/vitaly/rtabmap_helper_ws/devel -DCMAKE_INSTALL_PREFIX=/home/vitaly/rtabmap_helper_ws/install -G Unix Makefiles
