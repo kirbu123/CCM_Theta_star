@@ -1,0 +1,8 @@
+prefix=/home/vitaly/theta_star_ws/install
+
+Name: theta_star_planner
+Description: Description of theta_star_planner
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

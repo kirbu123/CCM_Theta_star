@@ -1,0 +1,8 @@
+# generated from catkin/cmake/template/pkg.context.pc.in
+CATKIN_PACKAGE_PREFIX = ""
+PROJECT_PKG_CONFIG_INCLUDE_DIRS = "/home/vitaly/theta_star_ws/src/ThetaStarROS/include".split(';') if "/home/vitaly/theta_star_ws/src/ThetaStarROS/include" != "" else []
+PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
+PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
+PROJECT_NAME = "theta_star_planner"
+PROJECT_SPACE_DIR = "/home/vitaly/theta_star_ws/devel"
+PROJECT_VERSION = "0.0.0"

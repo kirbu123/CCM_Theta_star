@@ -1,0 +1,8 @@
+prefix=/home/vitaly/theta_star_ws/devel
+
+Name: theta_star_planner
+Description: Description of theta_star_planner
+Version: 0.0.0
+Cflags: -I/home/vitaly/theta_star_ws/src/ThetaStarROS/include
+Libs: -L${prefix}/lib 
+Requires: 

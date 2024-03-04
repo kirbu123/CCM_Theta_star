@@ -1,0 +1,8 @@
+prefix=/home/vitaly/theta_star_ws/devel
+
+Name: tx2_action_server
+Description: Description of tx2_action_server
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
