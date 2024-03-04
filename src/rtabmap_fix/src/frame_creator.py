@@ -26,7 +26,7 @@ while not rospy.is_shutdown():
         orientation.w = 1.0
 
         # Publish transform
-        tf_broadcaster.sendTransform((position.x, position.y, position.z), (orientation.x, orientation.y, orientation.z, orientation.w), rospy.Time.now(), "map_frame", "world")
+        tf_broadcaster.sendTransform((position.x, position.y, position.z), (orientation.x, orientation.y, orientation.z, orientation.w), rospy.Time.now(), "local_map_lidar", "world")
 
         rospy.sleep(1.0)  # Pause 1 second
     except Exception:

@@ -17,33 +17,52 @@ def talker():
 
     while not rospy.is_shutdown():
         try:
-            (trans, rot) = listener.lookupTransform('/world', '/base_link', rospy.Time(0))
-            odometry_msg = Odometry()
+            (trans_local, rot_local) = listener.lookupTransform('/world', '/base_link', rospy.Time(0))
+            (trans_global, rot_global) = listener.lookupTransform('/world', '/local_map_lidar', rospy.Time(0))
+            for i in range(len(trans_global)):
+                trans_global[i] = trans_local[i] - trans_global[i]
+            odometry_local_msg = Odometry()
+            odometry_global_msg = Odometry()
 
             # Create object Vector3 for position
-            position = Vector3()
-            position.x = trans[0]
-            position.y = trans[1]
-            position.z = trans[2]
-            odometry_msg.pose.pose.position = position
+            position_local = Vector3()
+            position_local.x = trans_local[0]
+            position_local.y = trans_local[1]
+            position_local.z = trans_local[2]
+            odometry_local_msg.pose.pose.position = position_local
+
+            position_global = Vector3()
+            position_global.x = trans_global[0]
+            position_global.y = trans_global[1]
+            position_global.z = trans_global[2]
+            odometry_global_msg.pose.pose.position = position_global
 
             # Create object Quaternion for orientation
-            orientation = Quaternion()
-            orientation.x = rot[0]
-            orientation.y = rot[1]
-            orientation.z = rot[2]
-            orientation.w = rot[3]
-            odometry_msg.pose.pose.orientation = orientation
+            orientation_local = Quaternion()
+            orientation_local.x = rot_local[0]
+            orientation_local.y = rot_local[1]
+            orientation_local.z = rot_local[2]
+            orientation_local.w = rot_local[3]
+            odometry_local_msg.pose.pose.orientation = orientation_local
 
-            odometry_msg.header.stamp = rospy.Time.now()
-            odometry_msg.header.frame_id = 'world'
-            odometry_msg.child_frame_id= 'base_link'
+            orientation_global = orientation_local
 
-            global_odometry_topic.publish(odometry_msg)
-            local_odometry_topic.publish(odometry_msg)
+            odometry_global_msg.pose.pose.orientation = orientation_global
+
+            odometry_local_msg.header.stamp = rospy.Time.now()
+            odometry_local_msg.header.frame_id = 'world'
+            odometry_local_msg.child_frame_id= 'base_link'
+
+            odometry_global_msg.header.stamp = rospy.Time.now()
+            odometry_global_msg.header.frame_id = 'local_map_lidar'
+            odometry_global_msg.child_frame_id= 'base_link'
+
+            global_odometry_topic.publish(odometry_global_msg)
+            local_odometry_topic.publish(odometry_local_msg)
             rate.sleep()
 
-            rospy.loginfo('Translation: %s, Rotation: %s' % (trans, rot))
+            # rospy.loginfo('Translation: %s' % trans_global)
+            rospy.loginfo("ROS TOPICS RUN")
 
         except Exception:
             traceback.print_exc()

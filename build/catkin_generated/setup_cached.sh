@@ -8,4 +8,3 @@
 
 # modified environment variables
 export PWD='/home/vitaly/rtabmap_helper_ws/build'
-export PYTHONPATH="/home/vitaly/rtabmap_helper_ws/devel/lib/python3/dist-packages:$PYTHONPATH"
