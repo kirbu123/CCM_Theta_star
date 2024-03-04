@@ -99,6 +99,8 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
         )
 
     # * TF Tree
+
+
     set_targets(
         prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/tfPublisher"),
         attribute="inputs:targetPrims",
@@ -124,6 +126,39 @@ def setup_tf_graph(cfg: Config, simulation_app: SimulationApp, stage: Stage):
         attribute="inputs:targetPrims",
         target_prim_paths=[cfg.ur5_stage_path],
     )
+    '''''
+    
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/tfPublisher"),
+        attribute="inputs:parentPrim",
+        target_prim_paths=[f"{cfg.husky_stage_path}/base_link"],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/tfPublisher"),
+        attribute="inputs:targetPrims",
+        target_prim_paths=[f"{cfg.husky_stage_path}"],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/lidarTfPublisher"),
+        attribute="inputs:parentPrim",
+        target_prim_paths=[f"{cfg.husky_stage_path}/fence_link"],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/lidarTfPublisher"),
+        attribute="inputs:targetPrims",
+        target_prim_paths=[cfg.lidar.lidar_stage_path],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/ur5TfPublisher"),
+        attribute="inputs:parentPrim",
+        target_prim_paths=[f"{cfg.husky_stage_path}/put_ur5"],
+    )
+    set_targets(
+        prim=stage.GetPrimAtPath(cfg.tf.action_graph_path + "/ur5TfPublisher"),
+        attribute="inputs:targetPrims",
+        target_prim_paths=[cfg.ur5_stage_path],
+    )
+    '''''
 
     simulation_app.update()
 

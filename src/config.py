@@ -162,6 +162,7 @@ def get_config():
     parser.add_argument("--config_name", type=str, default=_config_name, help="Config file path")
     path_args, _ = parser.parse_known_args()  # type: ignore
     config_path = os.path.join(_config_dir, f"{path_args.config_name}.yaml")
+    print("FINALL CONFIG: " + config_path)
     config = parse_yaml2(config_path)
     args = parse_cli_to_yaml(parser=parser, cfg=config, cfg_path=config_path)
     final_config = merge(args, config)
