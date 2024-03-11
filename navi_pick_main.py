@@ -16,7 +16,6 @@ simulation_app = SimulationApp({"headless": False, "renderer": "RayTracedLightin
 import queue
 import threading
 import time
-
 import carb
 from omni.isaac.core import World
 from omni.isaac.core.utils import extensions
@@ -102,6 +101,9 @@ elif cfg.mode == "offline":
     action_servers["move_to_location"] = ActionServer(
         server_name="move_to_location",
     )
+    action_servers["move_to_location_by_coordinates"] = ActionServer(
+        server_name="move_to_location_by_coordinates",
+    )
     action_servers["pick_up_object"] = ActionServer(
         server_name="pick_up_object",
     )
@@ -113,13 +115,32 @@ elif cfg.mode == "offline":
     )
 
     # Add scenario to queue
+    task_queue.put(("move_to_location_by_coordinates", [18.0, 0.2]))
     add_scenario_to_queue(cfg, task_queue)
     setup_scene_for_scenario(cfg, my_world)
 else:
     raise ValueError(f"Unknown mode: {cfg.mode}")
 
+########################################## server-client connection ##########################################
+
+import rospy
+import actionlib
+# from track_pkg.msg import trackAction, trackActionGoal, trackActionResult, trackActionFeedback
+rospy.init_node('track_client')
+
+def track_client():
+    position, orientation = controller._husky.get_world_pose()
+    client = actionlib.SimpleActionClient('move_to_location', trackAction)
+    client.wait_for_server()
+    goal = trackActionGoal()
+    goal.goal.x, goal.goal.y = position[:2]
+    client.send_goal(goal.goal)
+    client.wait_for_result()
+    return client.get_result()
+
+########################################## server-client connection ##########################################
+
 while simulation_app.is_running():
-    # print(f"Checking queue...")
     if not task_queue.empty():
         my_world.step(render=True)
         if my_world.is_playing():
@@ -130,7 +151,10 @@ while simulation_app.is_running():
                 controller.move_to_location(task, action_servers[server_name])
                 time.sleep(2)
                 task_queue.task_done()
-
+            elif server_name == "move_to_location_by_coordinates":
+                controller.move_to_location_by_coordinates(task, action_servers[server_name])
+                time.sleep(2)
+                task_queue.task_done()
             elif server_name == "pick_up_object":
                 controller.pickup_object(task, action_servers[server_name])
                 time.sleep(2)
@@ -150,6 +174,7 @@ while simulation_app.is_running():
         for step in range(10):
             my_world.step(render=True)
             time.sleep(0.5)
+        
 
 
 simulation_app.close()  # close Isaac Sim

@@ -1,0 +1,13 @@
+# Define the goal
+float32 x
+float32 y
+
+---
+# Define the result
+float32 x
+float32 y
+
+---
+# Define the feedback
+float32 x
+float32 y

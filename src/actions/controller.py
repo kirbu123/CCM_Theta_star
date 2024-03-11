@@ -148,7 +148,6 @@ class HuskyController:
             feedback.y = position_obj_move[1]
             action_server.put_feedback(feedback)
             # \\\\\\
-
             position, orientation = self._husky.get_world_pose()
             wheel_actions = self._husky_controller.forward(
                 start_position=position,
@@ -169,6 +168,51 @@ class HuskyController:
         # Sending result
         result = MoveToResult()
         result.result = f"Done! Distance to goal {obj_move_str}: {distance}"
+        action_server.put_result(result)
+        print(f"Result sent: {result}")
+
+    def move_to_location_by_coordinates(self, task: list, action_server: ActionServer) -> None:
+        """
+        Moves the Husky robot to a specified location.
+
+        Args:
+            task: The task object containing the location to move to (in coordinates).
+            action_server: The action server object for the move to location action.
+        """
+        stage = get_current_stage()
+
+        distance = 100
+
+        stop_distance = 1.2
+
+        while not (distance < stop_distance):
+            # Sending feedback if not offline
+            feedback = MoveToFeedback()
+            feedback.x = task[0]
+            feedback.y = task[1]
+            action_server.put_feedback(feedback)
+            # \\\\\\
+
+            position, orientation = self._husky.get_world_pose()
+            wheel_actions = self._husky_controller.forward(
+                start_position=position,
+                start_orientation=orientation,
+                goal_position=task[:2],
+                lateral_velocity=self._cfg.lateral_velocity,
+                yaw_velocity=self._cfg.yaw_velocity,
+                position_tol=self._cfg.position_tol,
+            )
+
+            wheel_actions.joint_velocities = np.tile(wheel_actions.joint_velocities, 2)
+            self._husky.apply_wheel_actions(wheel_actions)
+            self.world.step(render=True)
+            distance = np.sum(
+                (self._husky.get_world_pose()[0][:2] - task[:2]) ** 2
+            )  # Compute distance   between husky and target
+
+        # Sending result
+        result = MoveToResult()
+        result.result = f"Done!"
         action_server.put_result(result)
         print(f"Result sent: {result}")
 
