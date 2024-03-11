@@ -1,0 +1,11 @@
+# Define the goal
+float32 x
+float32 y
+
+---
+# Define the result
+visualization_msgs/Marker result
+
+---
+# Define the feedback
+visualization_msgs/Marker feedback

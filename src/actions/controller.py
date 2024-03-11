@@ -231,10 +231,12 @@ class HuskyController:
 
         stop_distance = 1.2
 
+        trans = [15.0, 2.5, 0.0] # transform between world -> local_map_lidar (have to be fixed)
+
         # task = list(list(obj: x, y))
 
         for goal in task:
-            self.move_to_location_by_coordinates(goal, action_server)
+            self.move_to_location_by_coordinates([goal.x + trans[0], goal.y + trans[1]], action_server)
 
         # Sending result
         result = MoveToResult()

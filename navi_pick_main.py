@@ -131,8 +131,10 @@ else:
 
 import rospy
 import actionlib
-# from track_pkg.msg import track_coordinateAction, track_coordinateActionGoal, track_coordinateActionResult, track_coordinateActionFeedback
+
 from track_pkg.msg import TrackCoordinateAction, TrackCoordinateActionGoal, TrackCoordinateActionResult, TrackCoordinateActionFeedback
+from track_pkg.msg import TrackTrajectoryAction, TrackTrajectoryActionGoal, TrackTrajectoryActionResult, TrackTrajectoryActionFeedback
+
 rospy.init_node('track_client')
 
 def track_client_by_coordinate():
@@ -140,7 +142,7 @@ def track_client_by_coordinate():
     client = actionlib.SimpleActionClient('move_to_location', TrackCoordinateAction)
     timeout = rospy.Duration(10)
     if not client.wait_for_server(timeout=timeout):
-        rospy.logerr("Сервер недоступен в течение {} секунд".format(timeout.to_sec()))
+        rospy.logerr("Server unreachable during {} seconds".format(timeout.to_sec()))
         return 0
     goal = TrackCoordinateActionGoal()
     goal.goal.x, goal.goal.y = position[:2]
@@ -157,23 +159,25 @@ def track_client_by_coordinate():
 
 def track_client_by_trajectory():
     position, orientation = controller._husky.get_world_pose()
-    client = actionlib.SimpleActionClient('move_to_location', TrackCoordinateAction)
+    client = actionlib.SimpleActionClient('move_to_location', TrackTrajectoryAction)
     timeout = rospy.Duration(10)
     if not client.wait_for_server(timeout=timeout):
-        rospy.logerr("Сервер недоступен в течение {} секунд".format(timeout.to_sec()))
+        rospy.logerr("Server unreachable during {} seconds".format(timeout.to_sec()))
         return 0
-    goal = TrackCoordinateActionGoal()
+    goal = TrackTrajectoryActionGoal()
     goal.goal.x, goal.goal.y = position[:2]
     client.send_goal(goal.goal)
     client.wait_for_result()
-    result = client.get_result()
-    rospy.loginfo(f'Server response: x: {result.x} y: {result.y}')
-    if not (result.x, result.y) == (goal.goal.x, goal.goal.y):
-        task_queue.put(("move_to_location_by_coordinates", (result.x, result.y)))
-        rospy.loginfo(f'Task: x: {result.x}, y: {result.y} pushed to task queue')
+    result = client.get_result().result.points
+    rospy.loginfo(f'Server response: {result}')
+    if not len(result) == 0:
+        task_queue.put(("move_to_location_by_trajectory", result))
+        rospy.loginfo(f'Task: {result} pushed to task queue')
     else:
-        rospy.loginfo(f'Goal position is now position, task done by trivial algorithm')
+        rospy.loginfo(f'No result recieved')
     return result
+
+TRACK_PIPELINE = 'TRAJECTORY' # can be switched on COORDINATE
 
 ########################################## server-client connection ##########################################
 
@@ -190,6 +194,10 @@ while simulation_app.is_running():
                 task_queue.task_done()
             elif server_name == "move_to_location_by_coordinates":
                 controller.move_to_location_by_coordinates(task, action_servers[server_name])
+                time.sleep(2)
+                task_queue.task_done()
+            elif server_name == 'move_to_location_by_trajectory':
+                controller.move_to_location_by_trajectory(task, action_servers[server_name])
                 time.sleep(2)
                 task_queue.task_done()
             elif server_name == "pick_up_object":
@@ -209,8 +217,10 @@ while simulation_app.is_running():
     else:
         print("Waiting for tasks... 1, 2, 3... 10")
         try:
-            # track_client_by_coordinate() # coordinate (simple linear planning) version 
-            track_client_by_trajectory() # theta star trajectory (actual) version
+            if TRACK_PIPELINE == 'COORDINATE':
+                track_client_by_coordinate() # coordinate (simple linear planning) version
+            elif TRACK_PIPELINE == 'TRAJECTORY':
+                track_client_by_trajectory() # theta star trajectory (actual) version
         except Exception:
             traceback.print_exc()
         for step in range(10):
