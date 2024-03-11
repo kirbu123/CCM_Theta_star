@@ -2,13 +2,13 @@
 
 import rospy
 import actionlib
-from track_pkg.msg import trackAction, trackActionGoal, trackActionResult, trackActionFeedback
+from track_pkg.msg import TrackCoordinateAction, TrackCoordinateActionGoal, TrackCoordinateActionResult, TrackCoordinateActionFeedback
 
 
 def track_client():
-    client = actionlib.SimpleActionClient('move_to_location', trackAction)
+    client = actionlib.SimpleActionClient('move_to_location', TrackCoordinateAction)
     client.wait_for_server()
-    goal = trackActionGoal()
+    goal = TrackCoordinateActionGoal()
     client.send_goal(goal.goal)
     client.wait_for_result()
     return client.get_result()  # A FibonacciResult

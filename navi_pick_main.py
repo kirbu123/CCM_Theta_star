@@ -13,6 +13,7 @@ from omni.isaac.kit import SimulationApp
 
 simulation_app = SimulationApp({"headless": False, "renderer": "RayTracedLighting"})
 
+import traceback
 import queue
 import threading
 import time
@@ -104,6 +105,9 @@ elif cfg.mode == "offline":
     action_servers["move_to_location_by_coordinates"] = ActionServer(
         server_name="move_to_location_by_coordinates",
     )
+    action_servers["move_to_location_by_trajectory"] = ActionServer(
+        server_name="move_to_location_by_trajectory",
+    )
     action_servers["pick_up_object"] = ActionServer(
         server_name="pick_up_object",
     )
@@ -115,9 +119,11 @@ elif cfg.mode == "offline":
     )
 
     # Add scenario to queue
+    '''
     task_queue.put(("move_to_location_by_coordinates", [18.0, 0.2]))
     add_scenario_to_queue(cfg, task_queue)
     setup_scene_for_scenario(cfg, my_world)
+    '''
 else:
     raise ValueError(f"Unknown mode: {cfg.mode}")
 
@@ -125,18 +131,49 @@ else:
 
 import rospy
 import actionlib
-# from track_pkg.msg import trackAction, trackActionGoal, trackActionResult, trackActionFeedback
+# from track_pkg.msg import track_coordinateAction, track_coordinateActionGoal, track_coordinateActionResult, track_coordinateActionFeedback
+from track_pkg.msg import TrackCoordinateAction, TrackCoordinateActionGoal, TrackCoordinateActionResult, TrackCoordinateActionFeedback
 rospy.init_node('track_client')
 
-def track_client():
+def track_client_by_coordinate():
     position, orientation = controller._husky.get_world_pose()
-    client = actionlib.SimpleActionClient('move_to_location', trackAction)
-    client.wait_for_server()
-    goal = trackActionGoal()
+    client = actionlib.SimpleActionClient('move_to_location', TrackCoordinateAction)
+    timeout = rospy.Duration(10)
+    if not client.wait_for_server(timeout=timeout):
+        rospy.logerr("Сервер недоступен в течение {} секунд".format(timeout.to_sec()))
+        return 0
+    goal = TrackCoordinateActionGoal()
     goal.goal.x, goal.goal.y = position[:2]
     client.send_goal(goal.goal)
     client.wait_for_result()
-    return client.get_result()
+    result = client.get_result()
+    rospy.loginfo(f'Server response: x: {result.x} y: {result.y}')
+    if not (result.x, result.y) == (goal.goal.x, goal.goal.y):
+        task_queue.put(("move_to_location_by_coordinates", (result.x, result.y)))
+        rospy.loginfo(f'Task: x: {result.x}, y: {result.y} pushed to task queue')
+    else:
+        rospy.loginfo(f'Goal position is now position, task done by trivial algorithm')
+    return result
+
+def track_client_by_trajectory():
+    position, orientation = controller._husky.get_world_pose()
+    client = actionlib.SimpleActionClient('move_to_location', TrackCoordinateAction)
+    timeout = rospy.Duration(10)
+    if not client.wait_for_server(timeout=timeout):
+        rospy.logerr("Сервер недоступен в течение {} секунд".format(timeout.to_sec()))
+        return 0
+    goal = TrackCoordinateActionGoal()
+    goal.goal.x, goal.goal.y = position[:2]
+    client.send_goal(goal.goal)
+    client.wait_for_result()
+    result = client.get_result()
+    rospy.loginfo(f'Server response: x: {result.x} y: {result.y}')
+    if not (result.x, result.y) == (goal.goal.x, goal.goal.y):
+        task_queue.put(("move_to_location_by_coordinates", (result.x, result.y)))
+        rospy.loginfo(f'Task: x: {result.x}, y: {result.y} pushed to task queue')
+    else:
+        rospy.loginfo(f'Goal position is now position, task done by trivial algorithm')
+    return result
 
 ########################################## server-client connection ##########################################
 
@@ -171,6 +208,11 @@ while simulation_app.is_running():
                 continue
     else:
         print("Waiting for tasks... 1, 2, 3... 10")
+        try:
+            # track_client_by_coordinate() # coordinate (simple linear planning) version 
+            track_client_by_trajectory() # theta star trajectory (actual) version
+        except Exception:
+            traceback.print_exc()
         for step in range(10):
             my_world.step(render=True)
             time.sleep(0.5)

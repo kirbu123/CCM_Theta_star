@@ -216,6 +216,33 @@ class HuskyController:
         action_server.put_result(result)
         print(f"Result sent: {result}")
 
+    def move_to_location_by_trajectory(self, task: list, action_server: ActionServer) -> None:
+        """
+        Moves the Husky robot to a specified location.
+
+        Args:
+            task: The task object containing the trajectory to move on (as coordinate sequense).
+            action_server: The action server object for the move to location action.
+        """
+
+        stage = get_current_stage()
+
+        distance = 100
+
+        stop_distance = 1.2
+
+        # task = list(list(obj: x, y))
+
+        for goal in task:
+            self.move_to_location_by_coordinates(goal, action_server)
+
+        # Sending result
+        result = MoveToResult()
+        result.result = f"Done!"
+        action_server.put_result(result)
+        print(f"Result sent: {result}")
+
+
     def pickup_object(self, task: PickupObjectGoal, action_server: ActionServer) -> None:
         """
         Picks up an object with the UR5 manipulator.
