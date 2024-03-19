@@ -93,6 +93,7 @@ theta_star_planner_node_EXTERNAL_OBJECTS =
 /home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: ThetaStarROS/CMakeFiles/theta_star_planner_node.dir/src/path_planner.cpp.o
 /home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: ThetaStarROS/CMakeFiles/theta_star_planner_node.dir/build.make
 /home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so
+/home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: /usr/lib/x86_64-linux-gnu/liborocos-kdl.so
 /home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: /home/vitaly/ros_catkin_ws/devel_isolated/tf/lib/libtf.so
 /home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: /home/vitaly/ros_catkin_ws/devel_isolated/tf2_ros/lib/libtf2_ros.so
 /home/vitaly/theta_star_ws/devel/lib/theta_star_planner/theta_star_planner_node: /home/vitaly/ros_catkin_ws/devel_isolated/actionlib/lib/libactionlib.so

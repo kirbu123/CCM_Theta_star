@@ -77,54 +77,54 @@ navigation_msgs/move_base_msgs/CMakeFiles/move_base_msgs_generate_messages_cpp: 
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseAction.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Point.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseResult.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalID.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalStatus.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionGoal.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseResult.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionResult.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseAction.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/vitaly/theta_star_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code from move_base_msgs/MoveBaseAction.msg"
 	cd /home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs && /home/vitaly/theta_star_ws/build/catkin_generated/env_cached.sh /home/vitaly/miniconda3/bin/python3 /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseAction.msg -Imove_base_msgs:/home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs/msg -Imove_base_msgs:/home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg -Iactionlib_msgs:/home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg -Igeometry_msgs:/home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg -Istd_msgs:/home/vitaly/ros_catkin_ws/src/std_msgs/msg -p move_base_msgs -o /home/vitaly/theta_star_ws/devel/include/move_base_msgs -e /home/vitaly/ros_catkin_ws/src/gencpp/scripts
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Point.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalID.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalStatus.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionFeedback.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/vitaly/theta_star_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating C++ code from move_base_msgs/MoveBaseActionFeedback.msg"
 	cd /home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs && /home/vitaly/theta_star_ws/build/catkin_generated/env_cached.sh /home/vitaly/miniconda3/bin/python3 /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg -Imove_base_msgs:/home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs/msg -Imove_base_msgs:/home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg -Iactionlib_msgs:/home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg -Igeometry_msgs:/home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg -Istd_msgs:/home/vitaly/ros_catkin_ws/src/std_msgs/msg -p move_base_msgs -o /home/vitaly/theta_star_ws/devel/include/move_base_msgs -e /home/vitaly/ros_catkin_ws/src/gencpp/scripts
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionGoal.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Point.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalID.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalID.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionGoal.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/vitaly/theta_star_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating C++ code from move_base_msgs/MoveBaseActionGoal.msg"
 	cd /home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs && /home/vitaly/theta_star_ws/build/catkin_generated/env_cached.sh /home/vitaly/miniconda3/bin/python3 /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionGoal.msg -Imove_base_msgs:/home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs/msg -Imove_base_msgs:/home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg -Iactionlib_msgs:/home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg -Igeometry_msgs:/home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg -Istd_msgs:/home/vitaly/ros_catkin_ws/src/std_msgs/msg -p move_base_msgs -o /home/vitaly/theta_star_ws/devel/include/move_base_msgs -e /home/vitaly/ros_catkin_ws/src/gencpp/scripts
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseActionResult.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalID.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalID.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/ros_catkin_ws/src/common_msgs/actionlib_msgs/msg/GoalStatus.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseResult.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseActionResult.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
@@ -133,10 +133,10 @@ navigation_msgs/move_base_msgs/CMakeFiles/move_base_msgs_generate_messages_cpp: 
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Point.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseFeedback.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/vitaly/theta_star_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating C++ code from move_base_msgs/MoveBaseFeedback.msg"
@@ -144,10 +144,10 @@ navigation_msgs/move_base_msgs/CMakeFiles/move_base_msgs_generate_messages_cpp: 
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/theta_star_ws/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Point.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/MoveBaseGoal.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/vitaly/theta_star_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating C++ code from move_base_msgs/MoveBaseGoal.msg"
@@ -161,10 +161,10 @@ navigation_msgs/move_base_msgs/CMakeFiles/move_base_msgs_generate_messages_cpp: 
 
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/gen_cpp.py
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/theta_star_ws/src/navigation_msgs/move_base_msgs/msg/RecoveryStatus.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Point.msg
-/home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/std_msgs/msg/Header.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Pose.msg
+/home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/Quaternion.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/common_msgs/geometry_msgs/msg/PoseStamped.msg
 /home/vitaly/theta_star_ws/devel/include/move_base_msgs/RecoveryStatus.h: /home/vitaly/ros_catkin_ws/src/gencpp/scripts/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/vitaly/theta_star_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating C++ code from move_base_msgs/RecoveryStatus.msg"

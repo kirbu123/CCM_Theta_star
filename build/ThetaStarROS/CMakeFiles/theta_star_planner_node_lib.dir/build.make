@@ -140,6 +140,8 @@ theta_star_planner_node_lib_EXTERNAL_OBJECTS =
 /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: ThetaStarROS/CMakeFiles/theta_star_planner_node_lib.dir/src/environment_options.cpp.o
 /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: ThetaStarROS/CMakeFiles/theta_star_planner_node_lib.dir/src/theta_star.cpp.o
 /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: ThetaStarROS/CMakeFiles/theta_star_planner_node_lib.dir/build.make
+/home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: /usr/lib/x86_64-linux-gnu/liborocos-kdl.so
+/home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: /usr/lib/x86_64-linux-gnu/liborocos-kdl.so
 /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: /home/vitaly/ros_catkin_ws/devel_isolated/tf/lib/libtf.so
 /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: /home/vitaly/ros_catkin_ws/devel_isolated/tf2_ros/lib/libtf2_ros.so
 /home/vitaly/theta_star_ws/devel/lib/libtheta_star_planner_node_lib.so: /home/vitaly/ros_catkin_ws/devel_isolated/actionlib/lib/libactionlib.so

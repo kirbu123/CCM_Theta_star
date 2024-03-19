@@ -1135,4 +1135,36 @@ ThetaStarROS/CMakeFiles/theta_star_planner_node_lib.dir/src/map.cpp.o: \
  /home/vitaly/ros_catkin_ws/src/ros_comm/roscpp/include/ros/node_handle.h \
  /home/vitaly/theta_star_ws/src/ThetaStarROS/include/theta_star_planner/map.hpp \
  /home/vitaly/theta_star_ws/src/ThetaStarROS/include/theta_star_planner/geom.hpp \
- /home/vitaly/theta_star_ws/src/ThetaStarROS/include/theta_star_planner/const.hpp
+ /home/vitaly/theta_star_ws/src/ThetaStarROS/include/theta_star_planner/const.hpp \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2_geometry_msgs/include/tf2_geometry_msgs/tf2_geometry_msgs.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/convert.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/transform_datatypes.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/exceptions.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/TransformStamped.h \
+ /home/vitaly/ros_catkin_ws/src/roscpp_core/roscpp_traits/include/ros/message_operations.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/std_msgs/include/std_msgs/Header.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Transform.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Vector3.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Quaternion.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/impl/convert.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/Quaternion.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/Vector3.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/Scalar.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/MinMax.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/QuadWord.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/Transform.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/Matrix3x3.h \
+ /home/vitaly/ros_catkin_ws/src/geometry2/tf2/include/tf2/LinearMath/Quaternion.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/PointStamped.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Point.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/QuaternionStamped.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Vector3Stamped.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Pose.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/PoseStamped.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/PoseWithCovarianceStamped.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/PoseWithCovariance.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/Wrench.h \
+ /home/vitaly/ros_catkin_ws/devel_isolated/geometry_msgs/include/geometry_msgs/WrenchStamped.h \
+ /usr/include/kdl/frames.hpp /usr/include/kdl/utilities/kdl-config.h \
+ /usr/include/kdl/utilities/utility.h \
+ /usr/include/kdl/utilities/kdl-config.h /usr/include/kdl/frames.inl

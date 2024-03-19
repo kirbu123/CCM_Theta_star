@@ -83,6 +83,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/vitaly/ros_catkin_ws/devel_isolated/tf/share/tf/cmake/tfConfig.cmake"
   "/home/vitaly/ros_catkin_ws/devel_isolated/tf2/share/tf2/cmake/tf2Config-version.cmake"
   "/home/vitaly/ros_catkin_ws/devel_isolated/tf2/share/tf2/cmake/tf2Config.cmake"
+  "/home/vitaly/ros_catkin_ws/devel_isolated/tf2_geometry_msgs/share/tf2_geometry_msgs/cmake/tf2_geometry_msgsConfig-version.cmake"
+  "/home/vitaly/ros_catkin_ws/devel_isolated/tf2_geometry_msgs/share/tf2_geometry_msgs/cmake/tf2_geometry_msgsConfig.cmake"
   "/home/vitaly/ros_catkin_ws/devel_isolated/tf2_msgs/share/tf2_msgs/cmake/tf2_msgs-msg-extras.cmake"
   "/home/vitaly/ros_catkin_ws/devel_isolated/tf2_msgs/share/tf2_msgs/cmake/tf2_msgsConfig-version.cmake"
   "/home/vitaly/ros_catkin_ws/devel_isolated/tf2_msgs/share/tf2_msgs/cmake/tf2_msgsConfig.cmake"
