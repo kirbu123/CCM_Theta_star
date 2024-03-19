@@ -15,6 +15,8 @@ from track_pkg.msg import TrackTrajectoryAction, TrackTrajectoryActionGoal, Trac
 class MoveRobot:
     def __init__(self):
         # Setup feedback and result
+
+        self.ready_to_send = True
         rospy.init_node('track_action_server')
         self.rate = rospy.Rate(2)
 
@@ -58,7 +60,9 @@ class MoveRobot:
                 rospy.loginfo(f'Result determined by ROS: {self._result_trajectory.result.result.points}')
             else:
                 rospy.loginfo(f'No trajectory recieved')
-            self.server.set_succeeded(self._result_trajectory.result)
+            if self.ready_to_send:
+                self.server.set_succeeded(self._result_trajectory.result)
+                self.ready_to_send = False
 
     
 
@@ -67,6 +71,7 @@ class MoveRobot:
         self.goal_determined = True
         self._goal_coordinate.goal.x = data.pose.position.x
         self._goal_coordinate.goal.y = data.pose.position.y
+        self.ready_to_send = True
         rospy.loginfo(f'Data recieved: {data}')
 
     def subscriber_callback_trajectory(self, data):
