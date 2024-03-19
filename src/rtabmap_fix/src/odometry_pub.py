@@ -45,9 +45,8 @@ def talker():
             orientation_local.w = rot_local[3]
             odometry_local_msg.pose.pose.orientation = orientation_local
 
-            orientation_global = orientation_local
-
-            odometry_global_msg.pose.pose.orientation = orientation_global
+            orientation_gobal = orientation_local
+            odometry_global_msg.pose.pose.orientation = orientation_gobal
 
             odometry_local_msg.header.stamp = rospy.Time.now()
             odometry_local_msg.header.frame_id = 'world'

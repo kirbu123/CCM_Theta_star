@@ -761,8 +761,8 @@ ros_numpy/CMakeFiles/run_tests_ros_numpy_nosetests_test.dir/clean:
 # Target rules for target ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir
 
 # All Build rule for target.
-ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/all: CMakeFiles/tests.dir/all
 ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/all: ros_numpy/CMakeFiles/clean_test_results_ros_numpy.dir/all
+ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/all: CMakeFiles/tests.dir/all
 	$(MAKE) $(MAKESILENT) -f ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/build.make ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/build.make ros_numpy/CMakeFiles/_run_tests_ros_numpy_nosetests_test.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/vitaly/rtabmap_helper_ws/build/CMakeFiles --progress-num= "Built target _run_tests_ros_numpy_nosetests_test"

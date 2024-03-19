@@ -5,6 +5,7 @@ import tf
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Vector3, Quaternion
 import traceback
+import tf.transformations as tft
 
 rospy.init_node('create_new_frame')
 
@@ -14,19 +15,19 @@ while not rospy.is_shutdown():
     try:
         # Create object Vector3 for position
         position = Vector3()
-        position.x = 15.0
-        position.y = 2.5
+        position.x = 0.0
+        position.y = 0.0
         position.z = 0.0
 
         # Create object Quaternion for orientation
-        orientation = Quaternion()
-        orientation.x = 0.0
-        orientation.y = 0.0
-        orientation.z = 0.0
-        orientation.w = 1.0
+        roll = 0.0
+        pitch = 0.0
+        yaw = 0.0
+
+        quaternion = tft.quaternion_from_euler(roll, pitch, yaw)
 
         # Publish transform
-        tf_broadcaster.sendTransform((position.x, position.y, position.z), (orientation.x, orientation.y, orientation.z, orientation.w), rospy.Time.now(), "local_map_lidar", "world")
+        tf_broadcaster.sendTransform((position.x, position.y, position.z), quaternion, rospy.Time.now(), "local_map_lidar", "world")
 
         rospy.sleep(1.0)  # Pause 1 second
     except Exception:
